@@ -1,3 +1,3 @@
 const formatDate = () => {
-    return new Date().toISOString()
+    return new Date().getDay()
 }
