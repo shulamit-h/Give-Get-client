@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, IconButton, InputAdornment } from '@mui/material';
+import { TextField, Button, Box, Typography, IconButton, InputAdornment, Alert } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { loginUser } from '../api';
 import '../styles/AuthForm.css';
@@ -7,9 +7,14 @@ import '../styles/AuthForm.css';
 function Login() {
   const [formData, setFormData] = useState({
     userName: '',
-    password: ''
+    pwd: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState({
+    userName: false,
+    pwd: false,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -17,15 +22,33 @@ function Login() {
       ...formData,
       [name]: value,
     });
+    setFieldErrors({
+      ...fieldErrors,
+      [name]: false,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const newFieldErrors = {
+      userName: !formData.userName,
+      pwd: !formData.pwd,
+    };
+
+    if (Object.values(newFieldErrors).some(error => error)) {
+      setFieldErrors(newFieldErrors);
+      setError('נא למלא את כל השדות החובה המסומנים באדום.');
+      return;
+    }
+
+    setError(null);
     try {
-      const token = await loginUser(formData.userName, formData.password);
-      console.log('Login successful, token:', token);
-    } catch (error) {
+      const response = await loginUser(formData.userName, formData.pwd);
+      console.log('Login successful:', response);
+    } catch (error: any) {
       console.error('Login failed:', error);
+      setError(error.message || 'ההתחברות נכשלה');
     }
   };
 
@@ -35,30 +58,35 @@ function Login() {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
-      <Typography variant="h6" className="form-title">Login</Typography>
+      <Typography variant="h6" className="form-title">התחברות</Typography>
+      {error && <Alert severity="error">{error}</Alert>}
       <TextField
         margin="normal"
         required
         fullWidth
         id="userName"
-        label="Username"
+        label="שם משתמש"
         name="userName"
         autoComplete="username"
         autoFocus
         value={formData.userName}
         onChange={handleChange}
+        error={fieldErrors.userName}
+        helperText={fieldErrors.userName && "נא למלא שם משתמש"}
       />
       <TextField
         margin="normal"
         required
         fullWidth
-        name="password"
-        label="Password"
+        name="pwd"
+        label="סיסמא"
         type={showPassword ? 'text' : 'password'}
-        id="password"
+        id="pwd"
         autoComplete="current-password"
-        value={formData.password}
+        value={formData.pwd}
         onChange={handleChange}
+        error={fieldErrors.pwd}
+        helperText={fieldErrors.pwd && "נא למלא סיסמא"}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -74,7 +102,7 @@ function Login() {
         }}
       />
       <Button type="submit" fullWidth variant="contained" className="submit-btn">
-        Sign In
+        התחברות
       </Button>
     </Box>
   );

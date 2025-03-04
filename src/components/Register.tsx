@@ -17,12 +17,26 @@ function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState({
+    username: false,
+    email: false,
+    password: false,
+    age: false,
+    gender: false,
+    phoneNumber: false,
+    desc: false,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
+    });
+    setFieldErrors({
+      ...fieldErrors,
+      [name]: false,
     });
   };
 
@@ -32,23 +46,36 @@ function Register() {
         ...formData,
         profileImage: e.target.files[0],
       });
+      setFileName(e.target.files[0].name);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password || !formData.age || !formData.gender || !formData.phoneNumber || !formData.desc) {
-      setError('All fields are required');
+
+    const newFieldErrors = {
+      username: !formData.username,
+      email: !formData.email,
+      password: !formData.password,
+      age: !formData.age,
+      gender: !formData.gender,
+      phoneNumber: !formData.phoneNumber,
+      desc: !formData.desc,
+    };
+
+    if (Object.values(newFieldErrors).some(error => error)) {
+      setFieldErrors(newFieldErrors);
+      setError('נא למלא את כל השדות החובה המסומנים באדום.');
       return;
     }
+
     setError(null);
-    console.log('Form data submitted:', formData);
     try {
       const response = await registerUser(formData);
       console.log('Registration successful:', response);
     } catch (error: any) {
       console.error('Registration failed:', error);
-      setError(error.message || 'Registration failed');
+      setError(error.message || 'הרישום נכשל');
     }
   };
 
@@ -58,42 +85,48 @@ function Register() {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
-      <Typography variant="h6" className="form-title">Register</Typography>
+      <Typography variant="h6" className="form-title">הרשמה</Typography>
       {error && <Alert severity="error">{error}</Alert>}
       <TextField
         margin="normal"
         required
         fullWidth
         id="username"
-        label="Username"
+        label="שם משתמש"
         name="username"
         autoComplete="username"
         autoFocus
         value={formData.username}
         onChange={handleChange}
+        error={fieldErrors.username}
+        helperText={fieldErrors.username && "נא למלא שם משתמש"}
       />
       <TextField
         margin="normal"
         required
         fullWidth
         id="email"
-        label="Email Address"
+        label="כתובת אימייל"
         name="email"
         autoComplete="email"
         value={formData.email}
         onChange={handleChange}
+        error={fieldErrors.email}
+        helperText={fieldErrors.email && "נא למלא כתובת אימייל"}
       />
       <TextField
         margin="normal"
         required
         fullWidth
         name="password"
-        label="Password"
+        label="סיסמא"
         type={showPassword ? 'text' : 'password'}
         id="password"
         autoComplete="current-password"
         value={formData.password}
         onChange={handleChange}
+        error={fieldErrors.password}
+        helperText={fieldErrors.password && "נא למלא סיסמא"}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -113,51 +146,66 @@ function Register() {
         required
         fullWidth
         name="age"
-        label="Age"
+        label="גיל"
         type="number"
         id="age"
         value={formData.age}
         onChange={handleChange}
+        error={fieldErrors.age}
+        helperText={fieldErrors.age && "נא למלא גיל"}
       />
       <TextField
         margin="normal"
         required
         fullWidth
         name="gender"
-        label="Gender"
+        label="מין"
         select
         value={formData.gender}
         onChange={handleChange}
+        error={fieldErrors.gender}
+        helperText={fieldErrors.gender && "נא לבחור מין"}
       >
-        <MenuItem value="Male">Male</MenuItem>
-        <MenuItem value="Female">Female</MenuItem>
+        <MenuItem value="Male">זכר</MenuItem>
+        <MenuItem value="Female">נקבה</MenuItem>
       </TextField>
       <TextField
         margin="normal"
         required
         fullWidth
         name="phoneNumber"
-        label="Phone Number"
+        label="מספר טלפון"
         value={formData.phoneNumber}
         onChange={handleChange}
+        error={fieldErrors.phoneNumber}
+        helperText={fieldErrors.phoneNumber && "נא למלא מספר טלפון"}
       />
       <TextField
         margin="normal"
         required
         fullWidth
         name="desc"
-        label="Description"
+        label="תיאור"
         multiline
         rows={4}
         value={formData.desc}
         onChange={handleChange}
+        error={fieldErrors.desc}
+        helperText={fieldErrors.desc && "נא למלא תיאור"}
       />
       <Button variant="contained" component="label" fullWidth className="upload-btn">
-        Upload Profile Image
+        העלאת תמונת פרופיל
         <input type="file" hidden onChange={handleFileChange} />
       </Button>
+      {fileName && (
+        <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', borderRadius: '4px' }}>
+          <Typography variant="body2" color="textSecondary">
+            {fileName}
+          </Typography>
+        </Box>
+      )}
       <Button type="submit" fullWidth variant="contained" className="submit-btn">
-        Register
+        הרשמה
       </Button>
     </Box>
   );
