@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography, IconButton, InputAdornment, Alert } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { loginUser } from '../api';
+import { loginUser } from '../api'; // פונקציה זו מבצעת את הבקשה לשרת
 import '../styles/AuthForm.css';
 
 function Login() {
@@ -15,6 +16,7 @@ function Login() {
     userName: false,
     pwd: false,
   });
+  const navigate = useNavigate(); // הוסף את ה-navigate
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,22 +32,20 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const newFieldErrors = {
-      userName: !formData.userName,
-      pwd: !formData.pwd,
-    };
-
-    if (Object.values(newFieldErrors).some(error => error)) {
-      setFieldErrors(newFieldErrors);
-      setError('נא למלא את כל השדות החובה המסומנים באדום.');
-      return;
-    }
-
     setError(null);
+  
     try {
       const response = await loginUser(formData.userName, formData.pwd);
-      console.log('Login successful:', response);
+      console.log('Response from server:', response); // הדפסת תגובת השרת
+  
+      if (response) {  // לא בודקים response.token כי זה רק הטוקן עצמו
+        console.log('Saving token:', response);
+        localStorage.setItem('authToken', response); // שמור את הטוקן
+        navigate('/profile'); // נווט לדף הפרופיל
+      } else {
+        console.error('No token received');
+        setError('לא התקבל טוקן מהשרת');
+      }
     } catch (error: any) {
       console.error('Login failed:', error);
       setError(error.message || 'ההתחברות נכשלה');
