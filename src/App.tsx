@@ -1,11 +1,14 @@
 import React from 'react';
-import SignUp from './pages/SignUp';
+import Register from './components/Register';
+import Login from './components/Login';
+import AuthPage from './pages/AuthPage';
+
 
 const App = () => {
   return (
     <div>
-      <h1>ברוכים הבאים לפלטפורמת Give-Get</h1>
-      <SignUp />
+           <AuthPage />
+
     </div>
   );
 };
