@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar, FormControl, InputLabel, Select, Checkbox, ListItemText, SelectChangeEvent } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { registerUser } from '../api';
+import { registerUser, fetchTalentsByParent } from '../api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AuthForm.css';
+
+interface Talent {
+  id: number;
+  TalentName: string;
+}
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -14,7 +19,9 @@ function Register() {
     gender: 'Female',
     desc: '',
     profileImage: null as File | null,
-    phoneNumber: ''
+    phoneNumber: '',
+    offeredTalents: [] as number[],
+    wantedTalents: [] as number[],
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +36,22 @@ function Register() {
     phoneNumber: false,
     desc: false,
   });
+  const [talents, setTalents] = useState<Talent[]>([]);
+  const [subTalents, setSubTalents] = useState<Talent[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTalents = async () => {
+      try {
+        const response = await fetchTalentsByParent(0); // Fetch talents with ParentCategory = 0
+        setTalents(response);
+      } catch (error) {
+        console.error('Error fetching talents:', error);
+      }
+    };
+
+    fetchTalents();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -50,6 +72,24 @@ function Register() {
         profileImage: e.target.files[0],
       });
       setFileName(e.target.files[0].name);
+    }
+  };
+
+  const handleTalentChange = (e: SelectChangeEvent<number[]>, type: 'offered' | 'wanted') => {
+    const value = e.target.value as number[];
+    setFormData({
+      ...formData,
+      [type === 'offered' ? 'offeredTalents' : 'wantedTalents']: value,
+    });
+
+    // Fetch sub-talents if necessary
+    if (type === 'offered' || type === 'wanted') {
+      const selectedTalentId = value[value.length - 1];
+      fetchTalentsByParent(selectedTalentId).then(response => {
+        setSubTalents(response);
+      }).catch(error => {
+        console.error('Error fetching sub-talents:', error);
+      });
     }
   };
 
@@ -207,6 +247,78 @@ function Register() {
         error={fieldErrors.desc}
         helperText={fieldErrors.desc && "נא למלא תיאור"}
       />
+      <FormControl margin="normal" fullWidth>
+        <InputLabel id="offered-talents-label">כישורים מוצעים</InputLabel>
+        <Select
+          labelId="offered-talents-label"
+          multiple
+          value={formData.offeredTalents}
+          onChange={(e) => handleTalentChange(e, 'offered')}
+          renderValue={(selected: any) => talents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+        >
+          {talents.map((talent) => (
+            <MenuItem key={talent.id} value={talent.id}>
+              <Checkbox checked={formData.offeredTalents.indexOf(talent.id) > -1} />
+              <ListItemText primary={talent.TalentName} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {subTalents.length > 0 && (
+        <FormControl margin="normal" fullWidth>
+          <InputLabel id="sub-talents-label">תתי כישורים מוצעים</InputLabel>
+          <Select
+            labelId="sub-talents-label"
+            multiple
+            value={formData.offeredTalents}
+            onChange={(e) => handleTalentChange(e, 'offered')}
+            renderValue={(selected: any) => subTalents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+          >
+            {subTalents.map((talent) => (
+              <MenuItem key={talent.id} value={talent.id}>
+                <Checkbox checked={formData.offeredTalents.indexOf(talent.id) > -1} />
+                <ListItemText primary={talent.TalentName} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+      <FormControl margin="normal" fullWidth>
+        <InputLabel id="wanted-talents-label">כישורים רצויים</InputLabel>
+        <Select
+          labelId="wanted-talents-label"
+          multiple
+          value={formData.wantedTalents}
+          onChange={(e) => handleTalentChange(e, 'wanted')}
+          renderValue={(selected: any) => talents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+        >
+          {talents.map((talent) => (
+            <MenuItem key={talent.id} value={talent.id}>
+              <Checkbox checked={formData.wantedTalents.indexOf(talent.id) > -1} />
+              <ListItemText primary={talent.TalentName} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {subTalents.length > 0 && (
+        <FormControl margin="normal" fullWidth>
+          <InputLabel id="sub-talents-label">תתי כישורים רצויים</InputLabel>
+          <Select
+            labelId="sub-talents-label"
+            multiple
+            value={formData.wantedTalents}
+            onChange={(e) => handleTalentChange(e, 'wanted')}
+            renderValue={(selected: any) => subTalents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+          >
+            {subTalents.map((talent) => (
+              <MenuItem key={talent.id} value={talent.id}>
+                <Checkbox checked={formData.wantedTalents.indexOf(talent.id) > -1} />
+                <ListItemText primary={talent.TalentName} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
       <Button variant="contained" component="label" fullWidth className="upload-btn">
         העלאת תמונת פרופיל
         <input type="file" hidden onChange={handleFileChange} />

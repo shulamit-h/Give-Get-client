@@ -17,11 +17,7 @@ export const registerUser = async (userData: any) => {
     formData.append('File', userData.profileImage);
   }
   try {
-    const response = await axios.post(`${API_BASE_URL}/User`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const response = await axios.post(`${API_BASE_URL}/User`, formData);
     return response.data;
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
@@ -72,6 +68,16 @@ export const fetchUserData = async () => {
 
     console.log('User data from API:', userData); // הדפסת הנתונים שהתקבלו
     return userData;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// פונקציה להבאת רשימת הכישורים לפי קטגורית האב
+export const fetchTalentsByParent = async (parentId: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/Talent/byParent/${parentId}`);
+    return response.data;
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
   }
