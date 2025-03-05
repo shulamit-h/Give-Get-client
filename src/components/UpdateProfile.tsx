@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { registerUser } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { fetchUserData, updateUserData } from '../api';
 import '../styles/AuthForm.css';
 
-function Register() {
+const UpdateProfile = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -29,7 +29,32 @@ function Register() {
     phoneNumber: false,
     desc: false,
   });
+  const [userId, setUserId] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const userData = await fetchUserData();
+        setUserId(userData.id);
+        setFormData({
+          username: userData.userName,
+          email: userData.email,
+          password: '',
+          age: userData.age.toString(),
+          gender: userData.gender === 0 ? 'Male' : 'Female',
+          desc: userData.desc,
+          profileImage: null,
+          phoneNumber: userData.phoneNumber,
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        navigate('/login');
+      }
+    };
+
+    getUserData();
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -59,7 +84,7 @@ function Register() {
     const newFieldErrors = {
       username: !formData.username,
       email: !formData.email,
-      password: !formData.password,
+      password: false,
       age: !formData.age,
       gender: !formData.gender,
       phoneNumber: !formData.phoneNumber,
@@ -74,15 +99,17 @@ function Register() {
 
     setError(null);
     try {
-      const response = await registerUser(formData);
-      console.log('Registration successful:', response);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      if (userId !== null) {
+        const response = await updateUserData(userId, formData);
+        console.log('Update successful:', response);
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/profile');
+        }, 2000);
+      }
     } catch (error: any) {
-      console.error('Registration failed:', error);
-      setError(error.message || 'הרישום נכשל');
+      console.error('Update failed:', error);
+      setError(error.message || 'העדכון נכשל');
     }
   };
 
@@ -92,15 +119,13 @@ function Register() {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
-      <Typography variant="h6" className="form-title">הרשמה</Typography>
+      <Typography variant="h6" className="form-title">עדכון פרופיל</Typography>
       {error && <Alert severity="error">{error}</Alert>}
-      {success && (
-        <Snackbar open={success} autoHideDuration={2000} onClose={() => setSuccess(false)}>
-          <Alert severity="success">
-            נרשמת בהצלחה
-          </Alert>
-        </Snackbar>
-      )}
+      {success && <Snackbar open={success} autoHideDuration={2000} onClose={() => setSuccess(false)}>
+        <Alert severity="success">
+          הפרופיל התעדכן בהצלחה
+        </Alert>
+      </Snackbar>}
       <TextField
         margin="normal"
         required
@@ -130,7 +155,6 @@ function Register() {
       />
       <TextField
         margin="normal"
-        required
         fullWidth
         name="password"
         label="סיסמא"
@@ -180,8 +204,8 @@ function Register() {
         error={fieldErrors.gender}
         helperText={fieldErrors.gender && "נא לבחור מין"}
       >
-        <MenuItem value="Male">בן</MenuItem>
-        <MenuItem value="Female">בת</MenuItem>
+        <MenuItem value="Male">זכר</MenuItem>
+        <MenuItem value="Female">נקבה</MenuItem>
       </TextField>
       <TextField
         margin="normal"
@@ -219,10 +243,10 @@ function Register() {
         </Box>
       )}
       <Button type="submit" fullWidth variant="contained" className="submit-btn">
-        הרשמה
+        עדכון פרופיל
       </Button>
     </Box>
   );
-}
+};
 
-export default Register;
+export default UpdateProfile;

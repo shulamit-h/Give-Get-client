@@ -6,6 +6,8 @@ import Login from './components/Login';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Profile from './components/Profile'; // הנתיב שלך לדף פרופיל
+import UpdateProfile from './components/UpdateProfile';
+
 
 const theme = createTheme({
   palette: {
@@ -41,6 +43,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>
       </Router>
     </ThemeProvider>

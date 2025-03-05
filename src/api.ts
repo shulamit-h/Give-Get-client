@@ -14,7 +14,7 @@ export const registerUser = async (userData: any) => {
   formData.append('HashPwd', userData.password); // הוספת השדה HashPwd
   // הוספת קובץ התמונה אם קיים
   if (userData.profileImage) {
-    formData.append('profileImage', userData.profileImage);
+    formData.append('File', userData.profileImage);
   }
   try {
     const response = await axios.post(`${API_BASE_URL}/User`, formData, {
@@ -72,6 +72,41 @@ export const fetchUserData = async () => {
 
     console.log('User data from API:', userData); // הדפסת הנתונים שהתקבלו
     return userData;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// פונקציה לעדכון נתוני המשתמש
+export const updateUserData = async (userId: number, userData: any) => {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  const formData = new FormData();
+  Object.keys(userData).forEach(key => {
+    const value = userData[key];
+    if (value !== null) {
+      formData.append(key, value);
+    }
+  });
+  if (userData.password) {
+    formData.append('HashPwd', userData.password);
+  }
+  if (userData.profileImage) {
+    formData.append('File', userData.profileImage);
+  }
+
+  try {
+    const response = await axios.put(`${API_BASE_URL}/User/${userId}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    return response.data;
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
   }
