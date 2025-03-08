@@ -1,0 +1,100 @@
+/* עיצוב כללי לדף הבית */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+  }
+  
+  /* תפריט עליון */
+  .app-bar {
+    background-color: #a3d4e8; /* כחול כהה */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-title {
+    flex-grow: 1;
+    margin-left: 16px;
+  }
+  
+  /* אזור הגיבור */
+  .hero-section {
+    background-color: #d6878bac; /* ירוק טורקיז */
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .hero-title {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .hero-button {
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-transform: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .hero-button:hover {
+    opacity: 0.9;
+  }
+  
+  /* אזור תכונות */
+  .features-section {
+    padding: 80px 0;
+    background-color: #fbeeff; /* צהוב חרדל */
+    color: #333;
+  }
+  
+  .features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .feature-card {
+    padding: 40px;
+    text-align: center;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9cba5; /* כתום בהיר */
+    color: #fff;
+  }
+  
+  .feature-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* תחתית העמוד */
+  .footer {
+    background-color: #ee95e0; /* כחול כהה */
+    padding: 30px 0;
+    margin-top: auto;
+    color: #fff;
+    text-align: center;
+  }

@@ -11,16 +11,44 @@ export const registerUser = async (userData: any) => {
       formData.append(key, value);
     }
   });
+
   formData.append('HashPwd', userData.password); // הוספת השדה HashPwd
+
+  // הוספת כישרונות מוצעים
+  if (userData.offeredTalents && userData.offeredTalents.length > 0) {
+    userData.offeredTalents.forEach((talentId: number) => {
+      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
+    });
+  }
+
+  // הוספת כישרונות רצויים
+  if (userData.wantedTalents && userData.wantedTalents.length > 0) {
+    userData.wantedTalents.forEach((talentId: number) => {
+      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
+    });
+  }
+
+
   // הוספת קובץ התמונה אם קיים
   if (userData.profileImage) {
     formData.append('File', userData.profileImage);
   }
+  console.log('FormData to send:', formData);
+
   try {
-    const response = await axios.post(`${API_BASE_URL}/User`, formData);
+    const response = await axios.post(`${API_BASE_URL}/User`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
-  } catch (error: any) {
-    throw error.response ? error.response.data : error.message;
+  } catch (error) {
+    console.error('Error in registerUser:', error);
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    } else {
+      throw 'An unexpected error occurred';
+    }
   }
 };
 
@@ -101,13 +129,30 @@ export const updateUserData = async (userId: number, userData: any) => {
   if (userData.password) {
     formData.append('HashPwd', userData.password);
   }
+
+  // הוספת כישרונות מוצעים
+  if (userData.offeredTalents && userData.offeredTalents.length > 0) {
+    userData.offeredTalents.forEach((talentId: number) => {
+      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
+    });
+  }
+
+  // הוספת כישרונות רצויים
+  if (userData.wantedTalents && userData.wantedTalents.length > 0) {
+    userData.wantedTalents.forEach((talentId: number) => {
+      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
+    });
+  }
+
   if (userData.profileImage) {
     formData.append('File', userData.profileImage);
   }
+  console.log('FormData to send:', formData);
 
   try {
     const response = await axios.put(`${API_BASE_URL}/User/${userId}`, formData, {
       headers: {
+        'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`
       }
     });
@@ -115,5 +160,38 @@ export const updateUserData = async (userId: number, userData: any) => {
     return response.data;
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
+  }
+};
+
+// פונקציה לשליפת תגובות
+export const fetchComments = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/Comment`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    throw error;
+  }
+};
+// פונקציה להוספת תגובה חדשה
+export const addComment = async (content: string) => {
+  const formData = new FormData();
+  formData.append('content', content);
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/Comment`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`      },
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    throw error;
   }
 };

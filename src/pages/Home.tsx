@@ -1,107 +1,92 @@
 import React from 'react';
-import { Container, Typography, AppBar, Toolbar, Button, Grid, Paper, Box } from '@mui/material';
+import { Container, Grid, Typography, Button, Paper, AppBar, Toolbar, IconButton } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { styled } from '@mui/system';
+import MenuIcon from '@mui/icons-material/Menu';
+import '../styles/Home.css';
 
-const HeroContent = styled('div')(({ theme }) => ({
-  padding: theme.spacing(8, 0, 6),
-  backgroundColor: theme.palette.background.paper,
-  backgroundImage: 'url(https://source.unsplash.com/random)',
-  backgroundSize: 'cover',
-}));
-
-const HeroButtons = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(4),
-}));
-
-const Footer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(6),
-  backgroundColor: theme.palette.background.paper,
-}));
-
-const HomePage = () => {
+const Home = () => {
   return (
-    <>
-      <AppBar position="static">
+    <div className="home-container">
+      <AppBar position="sticky" className="app-bar">
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            אתר כשרונות
+          <IconButton edge="start" color="inherit" aria-label="menu">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className="app-title">
+            אתר הכישרונות
           </Typography>
-          <Button color="inherit" component={RouterLink} to="/register">
-            הרשמה
-          </Button>
-          <Button color="inherit" component={RouterLink} to="/login">
-            התחברות
-          </Button>
+          <Button color="inherit" component={RouterLink} to="/home">דף הבית</Button>
+          <Button color="inherit" component={RouterLink} to="/about">אודות</Button>
+          <Button color="inherit" component={RouterLink} to="/comments">תגובות</Button>
+          <Button color="inherit" component={RouterLink} to="/login">התחברות</Button>
         </Toolbar>
       </AppBar>
-      <main>
-        <HeroContent>
-          <Container maxWidth="sm">
-            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              ברוכים הבאים לאתר כשרונות
-            </Typography>
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              המקום למצוא ולהציג את הכשרונות שלך
-            </Typography>
-            <HeroButtons>
-              <Grid container spacing={2} justifyContent="center">
-                <Grid item>
-                  <Button variant="contained" color="primary" component={RouterLink} to="/register">
-                    הרשמה
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button variant="outlined" color="primary" component={RouterLink} to="/login">
-                    התחברות
-                  </Button>
-                </Grid>
-              </Grid>
-            </HeroButtons>
-          </Container>
-        </HeroContent>
-        <Container maxWidth="md" component="main">
-          <Grid container spacing={5} alignItems="flex-end">
+
+      <section className="hero-section">
+        <Container maxWidth="xl" className="hero-container">
+          <Typography variant="h2" className="hero-title">
+            גלו את הכישרונות שלכם
+          </Typography>
+          <Typography variant="h5" className="hero-subtitle">
+            הציגו, גלו והתחברו למספר כישרונות במגוון תחומים – המעבר שלכם להצלחה מתחיל כאן.
+          </Typography>
+          <div className="hero-buttons">
+            <Button variant="contained" className="hero-button" component={RouterLink} to="/register">
+              הרשמה
+            </Button>
+            <Button variant="outlined" className="hero-button" component={RouterLink} to="/login">
+              התחברות
+            </Button>
+          </div>
+        </Container>
+      </section>
+
+      <section className="features-section">
+        <Container maxWidth="xl" className="features-container">
+          <Grid container spacing={4}>
             <Grid item xs={12} sm={6} md={4}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h5" component="div" gutterBottom>
-                  גלה כשרונות
+              <Paper elevation={4} className="feature-card">
+                <Typography variant="h5" gutterBottom>
+                  גלו כישרונות
                 </Typography>
                 <Typography variant="body1">
-                  חפש וגלה כשרונות חדשים בתחומים שונים.
+                  מצאו כישרונות חדשים ומרתקים, וגלו עולמות חדשים של יצירתיות.
                 </Typography>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h5" component="div" gutterBottom>
-                  הצג את הכשרון שלך
+              <Paper elevation={4} className="feature-card">
+                <Typography variant="h5" gutterBottom>
+                  הציגו את הכשרון שלכם
                 </Typography>
                 <Typography variant="body1">
-                  הצג את הכשרון שלך וקבל הכרה מאחרים.
+                  הציגו את היכולות שלכם בצורה מרהיבה וקבלו הכרה והערכה מהקהילה.
                 </Typography>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h5" component="div" gutterBottom>
-                  התחבר עם אחרים
+              <Paper elevation={4} className="feature-card">
+                <Typography variant="h5" gutterBottom>
+                  התחברו עם אנשים
                 </Typography>
                 <Typography variant="body1">
-                  התחבר עם אנשים בעלי עניין דומה ושתף פעולה.
+                  חוו אינטראקציות משמעותיות ושיתופי פעולה שיעניקו לכם השראה והצלחה.
                 </Typography>
               </Paper>
             </Grid>
           </Grid>
         </Container>
-      </main>
-      <Footer>
-        <Container maxWidth="lg">
-          <Typography variant="body1">אתר כשרונות © 2025</Typography>
+      </section>
+      
+      <footer className="footer">
+        <Container maxWidth="xl">
+          <Typography variant="body2" align="center">
+            © 2023 אתר הכישרונות. כל הזכויות שמורות.
+          </Typography>
         </Container>
-      </Footer>
-    </>
+      </footer>
+    </div>
   );
 };
 
-export default HomePage;
+export default Home;

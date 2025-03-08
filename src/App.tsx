@@ -7,12 +7,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Profile from './components/Profile'; // הנתיב שלך לדף פרופיל
 import UpdateProfile from './components/UpdateProfile';
+import Comments from './components/Comments';
 
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#d6878b',
     },
     secondary: {
       main: '#dc004e',
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
+          <Route path="/comments" element={<Comments />} />
         </Routes>
       </Router>
     </ThemeProvider>

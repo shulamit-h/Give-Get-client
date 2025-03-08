@@ -3,49 +3,48 @@
     max-width: 800px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
-}
-
-.profile-header {
+  }
+  
+  .profile-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.profile-image-container {
+  }
+  
+  .profile-image-container {
     margin-top: 10px;
     width: 150px;
     height: 150px;
     border-radius: 50%;
     overflow: hidden;
-}
-
-.profile-image {
+  }
+  
+  .profile-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-
-.profile-details {
+  }
+  
+  .profile-details {
     margin-bottom: 20px;
-}
-
-.profile-actions {
+  }
+  
+  .profile-actions {
     display: flex;
     justify-content: space-between;
-}
-
-.profile-button {
-    background-color: #007bff;
+  }
+  
+  .profile-button {
+    background-color: #ff6f61;
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
-}
-
-.profile-button:hover {
-    background-color: #0056b3;
-}
+  }
+  
+  .profile-button:hover {
+    background-color: #ff9a8b;
+  }

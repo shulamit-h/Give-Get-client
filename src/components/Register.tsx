@@ -4,13 +4,15 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { registerUser, fetchTalentsByParent } from '../api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AuthForm.css';
+import axios from 'axios';
 
 interface Talent {
   id: number;
-  TalentName: string;
+  talentName: string;
+  parentCategory: number;
 }
 
-function Register() {
+const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -37,13 +39,14 @@ function Register() {
     desc: false,
   });
   const [talents, setTalents] = useState<Talent[]>([]);
-  const [subTalents, setSubTalents] = useState<Talent[]>([]);
+  const [subTalents, setSubTalents] = useState<{ [key: number]: Talent[] }>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTalents = async () => {
       try {
         const response = await fetchTalentsByParent(0); // Fetch talents with ParentCategory = 0
+        console.log('Fetched talents:', response); // בדוק את הנתונים המתקבלים
         setTalents(response);
       } catch (error) {
         console.error('Error fetching talents:', error);
@@ -83,10 +86,12 @@ function Register() {
     });
 
     // Fetch sub-talents if necessary
-    if (type === 'offered' || type === 'wanted') {
-      const selectedTalentId = value[value.length - 1];
+    const selectedTalentId = value[value.length - 1];
+    const selectedTalent = talents.find(talent => talent.id === selectedTalentId);
+    if (selectedTalent && selectedTalent.parentCategory === 0) {
       fetchTalentsByParent(selectedTalentId).then(response => {
-        setSubTalents(response);
+        console.log('Fetched sub-talents:', response); // בדוק את הנתונים המתקבלים
+        setSubTalents(prev => ({ ...prev, [selectedTalentId]: response }));
       }).catch(error => {
         console.error('Error fetching sub-talents:', error);
       });
@@ -114,7 +119,33 @@ function Register() {
 
     setError(null);
     try {
-      const response = await registerUser(formData);
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach(key => {
+        const value = formData[key as keyof typeof formData];
+        if (value !== null) {
+          formDataToSend.append(key, value as string | Blob);
+        }
+      });
+
+      if (formData.offeredTalents && formData.offeredTalents.length > 0) {
+        formData.offeredTalents.forEach(talentId => {
+          formDataToSend.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
+        });
+      }
+
+      if (formData.wantedTalents && formData.wantedTalents.length > 0) {
+        formData.wantedTalents.forEach(talentId => {
+          formDataToSend.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
+        });
+      }
+
+      if (formData.profileImage) {
+        formDataToSend.append('File', formData.profileImage);
+      }
+
+      console.log('FormData to send:', formDataToSend);
+
+      const response = await registerUser(formDataToSend);
       console.log('Registration successful:', response);
       setSuccess(true);
       setTimeout(() => {
@@ -122,7 +153,12 @@ function Register() {
       }, 2000);
     } catch (error: any) {
       console.error('Registration failed:', error);
-      setError(error.message || 'הרישום נכשל');
+      if (axios.isAxiosError(error)) {
+        console.error('Server error response:', error.response?.data); // לוג לתגובת השגיאה מהשרת
+        setError(error.response?.data || 'הרישום נכשל');
+      } else {
+        setError('הרישום נכשל');
+      }
     }
   };
 
@@ -254,35 +290,36 @@ function Register() {
           multiple
           value={formData.offeredTalents}
           onChange={(e) => handleTalentChange(e, 'offered')}
-          renderValue={(selected: any) => talents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+          renderValue={(selected) => selected.map(id => talents.find(talent => talent.id === id)?.talentName || '').join(', ')}
         >
           {talents.map((talent) => (
             <MenuItem key={talent.id} value={talent.id}>
               <Checkbox checked={formData.offeredTalents.indexOf(talent.id) > -1} />
-              <ListItemText primary={talent.TalentName} />
+              <ListItemText primary={talent.talentName || 'כישרון ללא שם'} />
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      {subTalents.length > 0 && (
-        <FormControl margin="normal" fullWidth>
-          <InputLabel id="sub-talents-label">תתי כישורים מוצעים</InputLabel>
+      {formData.offeredTalents.map(talentId => (
+        subTalents[talentId] &&
+        <FormControl key={talentId} margin="normal" fullWidth>
+          <InputLabel id={`sub-talents-label-${talentId}`}>תתי כישורים מוצעים ל-{talents.find(talent => talent.id === talentId)?.talentName}</InputLabel>
           <Select
-            labelId="sub-talents-label"
+            labelId={`sub-talents-label-${talentId}`}
             multiple
             value={formData.offeredTalents}
             onChange={(e) => handleTalentChange(e, 'offered')}
-            renderValue={(selected: any) => subTalents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+            renderValue={(selected: any) => subTalents[talentId].filter(talent => selected.includes(talent.id)).map(talent => talent.talentName).join(', ')}
           >
-            {subTalents.map((talent) => (
-              <MenuItem key={talent.id} value={talent.id}>
-                <Checkbox checked={formData.offeredTalents.indexOf(talent.id) > -1} />
-                <ListItemText primary={talent.TalentName} />
+            {subTalents[talentId].map((subTalent) => (
+              <MenuItem key={subTalent.id} value={subTalent.id}>
+                <Checkbox checked={formData.offeredTalents.indexOf(subTalent.id) > -1} />
+                <ListItemText primary={subTalent.talentName || 'כישרון ללא שם'} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-      )}
+      ))}
       <FormControl margin="normal" fullWidth>
         <InputLabel id="wanted-talents-label">כישורים רצויים</InputLabel>
         <Select
@@ -290,44 +327,43 @@ function Register() {
           multiple
           value={formData.wantedTalents}
           onChange={(e) => handleTalentChange(e, 'wanted')}
-          renderValue={(selected: any) => talents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+          renderValue={(selected) => selected.map(id => talents.find(talent => talent.id === id)?.talentName || '').join(', ')}
         >
           {talents.map((talent) => (
             <MenuItem key={talent.id} value={talent.id}>
               <Checkbox checked={formData.wantedTalents.indexOf(talent.id) > -1} />
-              <ListItemText primary={talent.TalentName} />
+              <ListItemText primary={talent.talentName || 'כישרון ללא שם'} />
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      {subTalents.length > 0 && (
-        <FormControl margin="normal" fullWidth>
-          <InputLabel id="sub-talents-label">תתי כישורים רצויים</InputLabel>
+      {formData.wantedTalents.map(talentId => (
+        subTalents[talentId] &&
+        <FormControl key={talentId} margin="normal" fullWidth>
+          <InputLabel id={`sub-talents-label-${talentId}`}>תתי כישורים רצויים ל-{talents.find(talent => talent.id === talentId)?.talentName}</InputLabel>
           <Select
-            labelId="sub-talents-label"
+            labelId={`sub-talents-label-${talentId}`}
             multiple
             value={formData.wantedTalents}
             onChange={(e) => handleTalentChange(e, 'wanted')}
-            renderValue={(selected: any) => subTalents.filter(talent => selected.includes(talent.id)).map(talent => talent.TalentName).join(', ')}
+            renderValue={(selected: any) => subTalents[talentId].filter(talent => selected.includes(talent.id)).map(talent => talent.talentName).join(', ')}
           >
-            {subTalents.map((talent) => (
-              <MenuItem key={talent.id} value={talent.id}>
-                <Checkbox checked={formData.wantedTalents.indexOf(talent.id) > -1} />
-                <ListItemText primary={talent.TalentName} />
+            {subTalents[talentId].map((subTalent) => (
+              <MenuItem key={subTalent.id} value={subTalent.id}>
+                <Checkbox checked={formData.wantedTalents.indexOf(subTalent.id) > -1} />
+                <ListItemText primary={subTalent.talentName || 'כישרון ללא שם'} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-      )}
+      ))}
       <Button variant="contained" component="label" fullWidth className="upload-btn">
         העלאת תמונת פרופיל
         <input type="file" hidden onChange={handleFileChange} />
       </Button>
       {fileName && (
         <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', borderRadius: '4px' }}>
-          <Typography variant="body2" color="textSecondary">
-            {fileName}
-          </Typography>
+          {fileName}
         </Box>
       )}
       <Button type="submit" fullWidth variant="contained" className="submit-btn">
