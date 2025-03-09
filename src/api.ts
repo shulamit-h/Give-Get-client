@@ -3,44 +3,20 @@ import axios from 'axios';
 const API_BASE_URL = 'https://localhost:7160/api';
 
 // פונקציה לביצוע בקשת POST לרישום משתמש חדש
-export const registerUser = async (userData: any) => {
-  const formData = new FormData();
-  Object.keys(userData).forEach(key => {
-    const value = userData[key];
-    if (value !== null) {
-      formData.append(key, value);
-    }
-  });
-
-  formData.append('HashPwd', userData.password); // הוספת השדה HashPwd
-
-  // הוספת כישרונות מוצעים
-  if (userData.offeredTalents && userData.offeredTalents.length > 0) {
-    userData.offeredTalents.forEach((talentId: number) => {
-      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
-    });
+export const registerUser = async (userData: FormData) => {
+  console.log('i am in api, let see the for loop- entries');
+  
+  for (const pair of userData.entries()) {
+    console.log(pair[0], pair[1]);  // 🔹 פה תראי אם הנתונים נשלחים כמו שצריך
   }
-
-  // הוספת כישרונות רצויים
-  if (userData.wantedTalents && userData.wantedTalents.length > 0) {
-    userData.wantedTalents.forEach((talentId: number) => {
-      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
-    });
-  }
-
-
-  // הוספת קובץ התמונה אם קיים
-  if (userData.profileImage) {
-    formData.append('File', userData.profileImage);
-  }
-  console.log('FormData to send:', formData);
 
   try {
-    const response = await axios.post(`${API_BASE_URL}/User`, formData, {
+    const response = await axios.post(`${API_BASE_URL}/User`, userData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+
     return response.data;
   } catch (error) {
     console.error('Error in registerUser:', error);
@@ -51,6 +27,93 @@ export const registerUser = async (userData: any) => {
     }
   }
 };
+
+
+
+
+// export const registerUser = async (userData: any) => {
+//   console.log('i am in api, let see the for loop- entries');
+//   for (const pair of userData.entries()) {
+//     console.log(pair[0], pair[1]);
+//   }
+
+//   const formData = new FormData();
+
+//   // הוספת פרטי המשתמש מהאובייקט userData
+//   Object.keys(userData).forEach(key => {
+//     const value = userData[key];
+//     if (value !== null) {
+//       formData.append(key, value);
+//     }
+//   })
+
+//   console.log('after Object.keys loop');
+//   for (const pair of formData.entries()) {
+//     console.log(pair[0], pair[1]);
+//   }
+  
+//   let password = formData.get('password');
+//   console.log('password:', password);
+  
+//   // מחיקת הסיסמה מהטופס כדי לא לשלוח אותה בצורה רגילה
+//   formData.delete('password');
+  
+//   // הוספת הסיסמה בתור HashPwd
+//   formData.append('HashPwd', password ? password : ""); // הוספת השדה HashPwd
+
+//   // יצירת סטרינג אחד שכולל את כל הכישרונות
+//   let talentsString = '';
+
+//   // הוספת כישרונות מוצעים
+//   if (userData.offeredTalents && userData.offeredTalents.length > 0) {
+//     talentsString += userData.offeredTalents.map((talentId: number) =>
+//       JSON.stringify({ TalentId: talentId, IsOffered: true })
+//     ).join(';'); // מחברים כל כישרון עם `;` כ-separator
+//   }
+
+//   // הוספת כישרונות רצויים
+//   if (userData.wantedTalents && userData.wantedTalents.length > 0) {
+//     if (talentsString) talentsString += ';'; // אם יש כבר כישרונות קודם, מוסיפים `;` לפני
+//     talentsString += userData.wantedTalents.map((talentId: number) =>
+//       JSON.stringify({ TalentId: talentId, IsOffered: false })
+//     ).join(';');
+//   }
+
+//   // הוספת כל הכישרונות ל-FormData אם יש
+//   if (talentsString) {
+//     formData.append('Talents', talentsString);
+//   }
+
+//   // הוספת קובץ התמונה אם קיים
+//   if (userData.profileImage) {
+//     formData.append('File', userData.profileImage);
+//   }
+
+//   console.log('FormData to send');
+//   let x = 0;
+//   for (const pair of formData.entries()) {
+//     x++;
+//     console.log(pair[0], pair[1]);
+//   }
+//   console.log(x);
+
+//   try {
+//     // שליחת בקשה ל-API בצורת multipart/form-data
+//     const response = await axios.post(`${API_BASE_URL}/User`, formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data'
+//       }
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error in registerUser:', error);
+//     if (axios.isAxiosError(error)) {
+//       throw error.response?.data || error.message;
+//     } else {
+//       throw 'An unexpected error occurred';
+//     }
+//   }
+// };
 
 // פונקציה לביצוע בקשת POST לכניסת משתמש
 export const loginUser = async (userName: string, pwd: string) => {

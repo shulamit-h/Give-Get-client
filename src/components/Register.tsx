@@ -118,40 +118,45 @@ const Register: React.FC = () => {
     }
 
     setError(null);
+
     try {
       const formDataToSend = new FormData();
+  
+      // הוספת השדות למעט password
       Object.keys(formData).forEach(key => {
-        const value = formData[key as keyof typeof formData];
-        if (value !== null) {
-          formDataToSend.append(key, value as string | Blob);
-        }
+          const value = formData[key as keyof typeof formData];
+          if (value !== null && key !== 'offeredTalents' && key !== 'wantedTalents') {
+              if (key === 'password') {
+                  formDataToSend.append('hashPwd', value as string); // שינוי השם ל-hashPwd
+              } else {
+                  formDataToSend.append(key, value as string | Blob);
+              }
+          }
       });
-
-      if (formData.offeredTalents && formData.offeredTalents.length > 0) {
-        formData.offeredTalents.forEach(talentId => {
-          formDataToSend.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
-        });
-      }
-
-      if (formData.wantedTalents && formData.wantedTalents.length > 0) {
-        formData.wantedTalents.forEach(talentId => {
-          formDataToSend.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
-        });
-      }
-
+  
+      // יצירת JSON עם הכישרונות
+      const talentsToSend = JSON.stringify([
+          ...(formData.offeredTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: true })),
+          ...(formData.wantedTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: false }))
+      ]);
+  
+      // הוספת הכישרונות
+      formDataToSend.append('talents', talentsToSend);
+  
+      // אם יש תמונה
       if (formData.profileImage) {
-        formDataToSend.append('File', formData.profileImage);
+          formDataToSend.append('File', formData.profileImage);
       }
-
-      console.log('FormData to send:', formDataToSend);
-
+  
+      // **🚀 הדפסה לפני השליחה**
+      console.log("🚀 Final FormData to send:");
+      for (const pair of formDataToSend.entries()) {
+          console.log(`${pair[0]}: ${pair[1]}`);
+      }
+  
+      console.log("🔄 Sending registration request...");
       const response = await registerUser(formDataToSend);
-      console.log('Registration successful:', response);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    } catch (error: any) {
+  } catch (error: any) {
       console.error('Registration failed:', error);
       if (axios.isAxiosError(error)) {
         console.error('Server error response:', error.response?.data); // לוג לתגובת השגיאה מהשרת
@@ -160,7 +165,8 @@ const Register: React.FC = () => {
         setError('הרישום נכשל');
       }
     }
-  };
+};
+
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
