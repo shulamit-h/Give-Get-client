@@ -45,8 +45,7 @@ const Register: React.FC = () => {
   useEffect(() => {
     const fetchTalents = async () => {
       try {
-        const response = await fetchTalentsByParent(0); // Fetch talents with ParentCategory = 0
-        console.log('Fetched talents:', response); // בדוק את הנתונים המתקבלים
+        const response = await fetchTalentsByParent(0);
         setTalents(response);
       } catch (error) {
         console.error('Error fetching talents:', error);
@@ -85,12 +84,10 @@ const Register: React.FC = () => {
       [type === 'offered' ? 'offeredTalents' : 'wantedTalents']: value,
     });
 
-    // Fetch sub-talents if necessary
     const selectedTalentId = value[value.length - 1];
     const selectedTalent = talents.find(talent => talent.id === selectedTalentId);
     if (selectedTalent && selectedTalent.parentCategory === 0) {
       fetchTalentsByParent(selectedTalentId).then(response => {
-        console.log('Fetched sub-talents:', response); // בדוק את הנתונים המתקבלים
         setSubTalents(prev => ({ ...prev, [selectedTalentId]: response }));
       }).catch(error => {
         console.error('Error fetching sub-talents:', error);
@@ -122,51 +119,48 @@ const Register: React.FC = () => {
     try {
       const formDataToSend = new FormData();
   
-      // הוספת השדות למעט password
       Object.keys(formData).forEach(key => {
           const value = formData[key as keyof typeof formData];
           if (value !== null && key !== 'offeredTalents' && key !== 'wantedTalents') {
               if (key === 'password') {
-                  formDataToSend.append('hashPwd', value as string); // שינוי השם ל-hashPwd
+                  formDataToSend.append('hashPwd', value as string);
               } else {
                   formDataToSend.append(key, value as string | Blob);
               }
           }
       });
-  
-      // יצירת JSON עם הכישרונות
+
       const talentsToSend = JSON.stringify([
-          ...(formData.offeredTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: true })),
-          ...(formData.wantedTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: false }))
+          ...(formData.offeredTalents || []).map((talentId: number) => {
+              const hasSubTalent = subTalents[talentId]?.some(sub => formData.offeredTalents.includes(sub.id));
+              return hasSubTalent ? null : { TalentId: talentId, IsOffered: true };
+          }).filter(Boolean),
+          ...(formData.wantedTalents || []).map((talentId: number) => {
+              const hasSubTalent = subTalents[talentId]?.some(sub => formData.wantedTalents.includes(sub.id));
+              return hasSubTalent ? null : { TalentId: talentId, IsOffered: false };
+          }).filter(Boolean)
       ]);
   
-      // הוספת הכישרונות
       formDataToSend.append('talents', talentsToSend);
   
-      // אם יש תמונה
       if (formData.profileImage) {
           formDataToSend.append('File', formData.profileImage);
       }
   
-      // **🚀 הדפסה לפני השליחה**
-      console.log("🚀 Final FormData to send:");
-      for (const pair of formDataToSend.entries()) {
-          console.log(`${pair[0]}: ${pair[1]}`);
-      }
-  
-      console.log("🔄 Sending registration request...");
       const response = await registerUser(formDataToSend);
-  } catch (error: any) {
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login'); // Redirect to login after success
+      }, 2000);
+    } catch (error: any) {
       console.error('Registration failed:', error);
       if (axios.isAxiosError(error)) {
-        console.error('Server error response:', error.response?.data); // לוג לתגובת השגיאה מהשרת
         setError(error.response?.data || 'הרישום נכשל');
       } else {
         setError('הרישום נכשל');
       }
     }
-};
-
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -179,7 +173,7 @@ const Register: React.FC = () => {
       {success && (
         <Snackbar open={success} autoHideDuration={2000} onClose={() => setSuccess(false)}>
           <Alert severity="success">
-            נרשמת בהצלחה
+            הרישום התבצע בהצלחה!!
           </Alert>
         </Snackbar>
       )}

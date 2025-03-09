@@ -175,45 +175,21 @@ export const fetchTalentsByParent = async (parentId: number) => {
 };
 
 // פונקציה לעדכון נתוני המשתמש
-export const updateUserData = async (userId: number, userData: any) => {
+export const updateUserData = async (userId: number, userData: FormData) => {
   const token = localStorage.getItem('authToken');
 
   if (!token) {
     throw new Error('No token found');
   }
 
-  const formData = new FormData();
-  Object.keys(userData).forEach(key => {
-    const value = userData[key];
-    if (value !== null) {
-      formData.append(key, value);
-    }
-  });
-  if (userData.password) {
-    formData.append('HashPwd', userData.password);
+  for (const pair of userData.entries()) {
+    console.log(pair[0], pair[1]);  // 🔹 פה תראי אם הנתונים נשלחים כמו שצריך
   }
 
-  // הוספת כישרונות מוצעים
-  if (userData.offeredTalents && userData.offeredTalents.length > 0) {
-    userData.offeredTalents.forEach((talentId: number) => {
-      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: true }));
-    });
-  }
-
-  // הוספת כישרונות רצויים
-  if (userData.wantedTalents && userData.wantedTalents.length > 0) {
-    userData.wantedTalents.forEach((talentId: number) => {
-      formData.append('Talents', JSON.stringify({ TalentId: talentId, IsOffered: false }));
-    });
-  }
-
-  if (userData.profileImage) {
-    formData.append('File', userData.profileImage);
-  }
-  console.log('FormData to send:', formData);
+  console.log('FormData to send:', userData)
 
   try {
-    const response = await axios.put(`${API_BASE_URL}/User/${userId}`, formData, {
+    const response = await axios.put(`${API_BASE_URL}/User/${userId}`, userData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`
