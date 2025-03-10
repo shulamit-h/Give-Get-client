@@ -20,3 +20,15 @@ export type TalentUserDto = {
   talentId: number;
   isOffered: boolean;
 };
+
+export interface Talent {
+  id: number;
+  talentName: string;
+  parentCategory: number;
+}
+
+export interface TalentUser {
+  id: number;
+  talentId: number;
+  isOffered: boolean;
+}

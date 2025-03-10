@@ -19,6 +19,7 @@ const Home = () => {
           <Button color="inherit" component={RouterLink} to="/about">אודות</Button>
           <Button color="inherit" component={RouterLink} to="/comments">תגובות</Button>
           <Button color="inherit" component={RouterLink} to="/login">התחברות</Button>
+          <Button color="inherit" component={RouterLink} to="/talents">הכישרונות שלנו</Button>
         </Toolbar>
       </AppBar>
 

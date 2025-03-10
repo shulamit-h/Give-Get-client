@@ -8,6 +8,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Profile from './components/Profile'; // הנתיב שלך לדף פרופיל
 import UpdateProfile from './components/UpdateProfile';
 import Comments from './components/Comments';
+import Talents from './components/Talents';
+import About from './components/About';
 
 
 const theme = createTheme({
@@ -46,6 +48,8 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/comments" element={<Comments />} />
+          <Route path="/talents" element={<Talents />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Router>
     </ThemeProvider>

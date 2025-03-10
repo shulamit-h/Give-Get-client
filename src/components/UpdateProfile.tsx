@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar, FormControl, InputLabel, Select, Checkbox, ListItemText, SelectChangeEvent } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserData, updateUserData, fetchTalentsByParent } from '../api';
+import { fetchUserData, updateUserData, fetchTalentsByParent, fetchTalentsByUserId } from '../api';
+import { Talent , TalentUser } from '../Types/Types';
 import '../styles/AuthForm.css';
 
-interface Talent {
-  id: number;
-  talentName: string;
-  parentCategory: number;
-}
+
 
 const UpdateProfile = () => {
   const [formData, setFormData] = useState({
@@ -40,9 +37,14 @@ const UpdateProfile = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [talents, setTalents] = useState<Talent[]>([]);
   const [subTalents, setSubTalents] = useState<{ [key: number]: Talent[] }>({});
+  const [existingOfferedTalents, setExistingOfferedTalents] = useState<number[]>([]);
+  const [existingWantedTalents, setExistingWantedTalents] = useState<number[]>([]);
+  const [talentsData, setTalentsData] = useState<TalentUser[]>([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     const getUserData = async () => {
       try {
         const userData = await fetchUserData();
@@ -60,10 +62,35 @@ const UpdateProfile = () => {
           wantedTalents: userData.wantedTalents || [],
         });
         setFileName(userData.profile);
+        setExistingOfferedTalents(userData.offeredTalents || []);
+        setExistingWantedTalents(userData.wantedTalents || []);
+
+        try{       
+           const talentsData = await fetchTalentsByUserId(userData.id);
+        }
+        catch{
+          console.log("dont have talents")
+        }
+        const offeredTalents = talentsData.filter((talent: TalentUser) => talent.isOffered).map((talent: TalentUser) => talent.talentId);
+        const wantedTalents = talentsData.filter((talent: TalentUser) => !talent.isOffered).map((talent: TalentUser) => talent.talentId);
+
+        setTalentsData(talentsData);
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          offeredTalents: offeredTalents,
+          wantedTalents: wantedTalents,
+        }));
+
+        // Fetch sub talents for existing talents
+        await Promise.all([
+          ...offeredTalents.map((talentId: number) => fetchSubTalents(talentId)),
+          ...wantedTalents.map((talentId: number) => fetchSubTalents(talentId))
+        ]);
       } catch (error) {
         console.error('Error fetching user data:', error);
         navigate('/login');
       }
+      
     };
 
     const fetchTalents = async () => {
@@ -75,6 +102,23 @@ const UpdateProfile = () => {
       }
     };
 
+    const fetchSubTalents = async (talentId: number) => {
+      const selectedTalent = talents.find(talent => talent.id === talentId);
+      if (selectedTalent && selectedTalent.parentCategory === 0) {
+        try {
+          const response = await fetchTalentsByParent(talentId);
+          setSubTalents(prevSubTalents => ({
+            ...prevSubTalents,
+            [talentId]: response,
+          }));
+        } catch (error) {
+          console.error('Error fetching sub-talents:', error);
+        }
+      }
+    };
+
+
+    fetchTalents();
     getUserData();
     fetchTalents();
   }, [navigate]);
@@ -98,41 +142,52 @@ const UpdateProfile = () => {
         profileImage: e.target.files[0],
       });
       setFileName(e.target.files[0].name);
-    }else {
-      // אם לא נבחר קובץ, נשמור את profileImage כ-null
+    } else {
       setFormData({
-          ...formData,
-          profileImage: null,
+        ...formData,
+        profileImage: null,
       });
-  }
-};
-
+    }
+  };
 
   const handleTalentChange = async (e: SelectChangeEvent<number[]>, type: 'offered' | 'wanted') => {
     const value = e.target.value as number[];
+    const selectedTalentIds = [...value];
+
     setFormData({
       ...formData,
       [type === 'offered' ? 'offeredTalents' : 'wantedTalents']: value,
     });
 
-    const selectedTalentId = value[value.length - 1];
-    const selectedTalent = talents.find(talent => talent.id === selectedTalentId);
-    if (selectedTalent && selectedTalent.parentCategory === 0) {
-      try {
-        const response = await fetchTalentsByParent(selectedTalentId);
-        setSubTalents(prevSubTalents => ({
-          ...prevSubTalents,
-          [selectedTalentId]: response,
-        }));
-      } catch (error) {
-        console.error('Error fetching sub-talents:', error);
+    const allSelectedTalentIds = new Set(selectedTalentIds);
+
+    for (const selectedTalentId of selectedTalentIds) {
+      const selectedTalent = talents.find(talent => talent.id === selectedTalentId);
+
+      if (selectedTalent && selectedTalent.parentCategory === 0) {
+        try {
+          const response = await fetchTalentsByParent(selectedTalentId);
+          setSubTalents(prevSubTalents => ({
+            ...prevSubTalents,
+            [selectedTalentId]: response,
+          }));
+
+          const subTalentIds = response.map((subTalent: { id: number }) => subTalent.id);
+          subTalentIds.forEach((subTalentId: number) => allSelectedTalentIds.add(subTalentId));
+        } catch (error) {
+          console.error('Error fetching sub-talents:', error);
+        }
       }
     }
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [type === 'offered' ? 'offeredTalents' : 'wantedTalents']: Array.from(allSelectedTalentIds),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userData = await fetchUserData();
 
     const newFieldErrors = {
       username: !formData.username,
@@ -165,22 +220,45 @@ const UpdateProfile = () => {
         }
       });
 
-      // אם לא נבחרה תמונה חדשה או שהתמונה הנוכחית היא ברירת המחדל, שלח null
-    if (formData.profileImage && formData.profileImage.name !== 'default_profile_image.png') {
-      formDataToSend.append('File', formData.profileImage);
-  } else {
-      formDataToSend.append('ProfileImage', 'null');
-      formDataToSend.append('File', 'null');
-  }
+      if (formData.profileImage && formData.profileImage.name !== 'default_profile_image.png') {
+        formDataToSend.append('File', formData.profileImage);
+      } else {
+        formDataToSend.append('ProfileImage', 'null');
+        formDataToSend.append('File', 'null');
+      }
 
-      const talentsToSend = JSON.stringify([
-        ...(formData.offeredTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: true })),
-        ...(formData.wantedTalents || []).map((talentId: number) => ({ TalentId: talentId, IsOffered: false }))
-      ]);
+      const newOfferedTalents = formData.offeredTalents.filter(talentId => 
+        !talentsData.some(talent => talent.talentId === talentId && talent.isOffered)
+      );
 
-      formDataToSend.append('talents', talentsToSend);
+      const newWantedTalents = formData.wantedTalents.filter(talentId => 
+        !talentsData.some(talent => talent.talentId === talentId && !talent.isOffered)
+      );
+
+      const removedOfferedTalents = talentsData.filter(talent => 
+        talent.isOffered && !formData.offeredTalents.includes(talent.talentId)
+      );
+
+      const removedWantedTalents = talentsData.filter(talent => 
+        !talent.isOffered && !formData.wantedTalents.includes(talent.talentId)
+      );
+
+      // Check if there are no changes
+      const talentsToSend = [
+        ...newOfferedTalents.map(talentId => ({ TalentId: talentId, IsOffered: true })),
+        ...newWantedTalents.map(talentId => ({ TalentId: talentId, IsOffered: false })),
+        ...removedOfferedTalents.map(talent => ({ TalentId: talent.talentId, IsOffered: true, Remove: true })),
+        ...removedWantedTalents.map(talent => ({ TalentId: talent.talentId, IsOffered: false, Remove: true })),
+      ];
+
+      if (talentsToSend.length > 0) {
+        formDataToSend.append('talents', JSON.stringify(talentsToSend));
+      } else {
+        formDataToSend.append('talents', JSON.stringify([]));
+      }
 
       const response = await updateUserData(userId!, formDataToSend);
+
       console.log('Update successful:', response);
       setSuccess(true);
       setTimeout(() => {
@@ -200,11 +278,11 @@ const UpdateProfile = () => {
     <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
       <Typography variant="h6" className="form-title">עדכון פרופיל</Typography>
       {error && <Alert severity="error">{error}</Alert>}
-      {success && <Snackbar open={success} autoHideDuration={2000} onClose={() => setSuccess(false)}>
-        <Alert severity="success">
-          הפרופיל התעדכן בהצלחה
-        </Alert>
-      </Snackbar>}
+      {success && (
+        <Snackbar open={success} autoHideDuration={2000} onClose={() => setSuccess(false)}>
+          <Alert severity="success">הפרופיל התעדכן בהצלחה</Alert>
+        </Snackbar>
+      )}
       <Box display="flex" flexDirection="column" gap={2}>
         <TextField
           margin="normal"
@@ -218,7 +296,7 @@ const UpdateProfile = () => {
           value={formData.username}
           onChange={handleChange}
           error={fieldErrors.username}
-          helperText={fieldErrors.username && "נא למלא שם משתמש"}
+          helperText={fieldErrors.username && 'נא למלא שם משתמש'}
         />
         <TextField
           margin="normal"
@@ -231,7 +309,7 @@ const UpdateProfile = () => {
           value={formData.email}
           onChange={handleChange}
           error={fieldErrors.email}
-          helperText={fieldErrors.email && "נא למלא כתובת אימייל"}
+          helperText={fieldErrors.email && 'נא למלא כתובת אימייל'}
         />
         <TextField
           margin="normal"
@@ -244,15 +322,11 @@ const UpdateProfile = () => {
           value={formData.password}
           onChange={handleChange}
           error={fieldErrors.password}
-          helperText={fieldErrors.password && "נא למלא סיסמא"}
+          helperText={fieldErrors.password && 'נא למלא סיסמא'}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
+                <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -270,7 +344,7 @@ const UpdateProfile = () => {
           value={formData.age}
           onChange={handleChange}
           error={fieldErrors.age}
-          helperText={fieldErrors.age && "נא למלא גיל"}
+          helperText={fieldErrors.age && 'נא למלא גיל'}
         />
         <TextField
           margin="normal"
@@ -282,7 +356,7 @@ const UpdateProfile = () => {
           value={formData.gender}
           onChange={handleChange}
           error={fieldErrors.gender}
-          helperText={fieldErrors.gender && "נא לבחור מין"}
+          helperText={fieldErrors.gender && 'נא לבחור מין'}
         >
           <MenuItem value="Male">זכר</MenuItem>
           <MenuItem value="Female">נקבה</MenuItem>
@@ -296,7 +370,7 @@ const UpdateProfile = () => {
           value={formData.phoneNumber}
           onChange={handleChange}
           error={fieldErrors.phoneNumber}
-          helperText={fieldErrors.phoneNumber && "נא למלא מספר טלפון"}
+          helperText={fieldErrors.phoneNumber && 'נא למלא מספר טלפון'}
         />
         <TextField
           margin="normal"
@@ -309,7 +383,7 @@ const UpdateProfile = () => {
           value={formData.desc}
           onChange={handleChange}
           error={fieldErrors.desc}
-          helperText={fieldErrors.desc && "נא למלא תיאור"}
+          helperText={fieldErrors.desc && 'נא למלא תיאור'}
         />
         <FormControl margin="normal" fullWidth>
           <InputLabel id="offered-talents-label">כישורים מוצעים</InputLabel>
@@ -318,7 +392,7 @@ const UpdateProfile = () => {
             multiple
             value={formData.offeredTalents}
             onChange={(e) => handleTalentChange(e, 'offered')}
-            renderValue={(selected) => selected.map(id => talents.find(talent => talent.id === id)?.talentName || '').join(', ')}
+            renderValue={(selected) => selected.map((id) => talents.find((talent) => talent.id === id)?.talentName || '').join(', ')}
           >
             {talents.map((talent) => (
               <MenuItem key={talent.id} value={talent.id}>
@@ -328,6 +402,26 @@ const UpdateProfile = () => {
             ))}
           </Select>
         </FormControl>
+        {formData.offeredTalents.map(talentId => (
+        subTalents[talentId] &&
+        <FormControl key={talentId} margin="normal" fullWidth>
+          <InputLabel id={`sub-talents-label-${talentId}`}>תתי כישורים מוצעים ל-{talents.find(talent => talent.id === talentId)?.talentName}</InputLabel>
+          <Select
+            labelId={`sub-talents-label-${talentId}`}
+            multiple
+            value={formData.offeredTalents}
+            onChange={(e) => handleTalentChange(e, 'offered')}
+            renderValue={(selected: any) => subTalents[talentId].filter(talent => selected.includes(talent.id)).map(talent => talent.talentName).join(', ')}
+          >
+            {subTalents[talentId].map((subTalent) => (
+              <MenuItem key={subTalent.id} value={subTalent.id}>
+                <Checkbox checked={formData.offeredTalents.indexOf(subTalent.id) > -1} />
+                <ListItemText primary={subTalent.talentName || 'כישרון ללא שם'} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ))}
         <FormControl margin="normal" fullWidth>
           <InputLabel id="wanted-talents-label">כישורים רצויים</InputLabel>
           <Select
@@ -335,7 +429,7 @@ const UpdateProfile = () => {
             multiple
             value={formData.wantedTalents}
             onChange={(e) => handleTalentChange(e, 'wanted')}
-            renderValue={(selected) => selected.map(id => talents.find(talent => talent.id === id)?.talentName || '').join(', ')}
+            renderValue={(selected) => selected.map((id) => talents.find((talent) => talent.id === id)?.talentName || '').join(', ')}
           >
             {talents.map((talent) => (
               <MenuItem key={talent.id} value={talent.id}>
@@ -345,6 +439,26 @@ const UpdateProfile = () => {
             ))}
           </Select>
         </FormControl>
+        {formData.wantedTalents.map(talentId => (
+        subTalents[talentId] &&
+        <FormControl key={talentId} margin="normal" fullWidth>
+          <InputLabel id={`sub-talents-label-${talentId}`}>תתי כישורים רצויים ל-{talents.find(talent => talent.id === talentId)?.talentName}</InputLabel>
+          <Select
+            labelId={`sub-talents-label-${talentId}`}
+            multiple
+            value={formData.wantedTalents}
+            onChange={(e) => handleTalentChange(e, 'wanted')}
+            renderValue={(selected: any) => subTalents[talentId].filter(talent => selected.includes(talent.id)).map(talent => talent.talentName).join(', ')}
+          >
+            {subTalents[talentId].map((subTalent) => (
+              <MenuItem key={subTalent.id} value={subTalent.id}>
+                <Checkbox checked={formData.wantedTalents.indexOf(subTalent.id) > -1} />
+                <ListItemText primary={subTalent.talentName || 'כישרון ללא שם'} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ))}
         <Button variant="contained" component="label" fullWidth className="upload-btn">
           העלאת תמונת פרופיל
           <input type="file" hidden onChange={handleFileChange} />

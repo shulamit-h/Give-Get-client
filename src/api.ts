@@ -174,6 +174,25 @@ export const fetchTalentsByParent = async (parentId: number) => {
   }
 };
 
+// פונקציה להבאת כישורים לפי מזהה משתמש
+export const fetchTalentsByUserId = async (userId: number) => {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+  try {
+    const response = await axios.get(`${API_BASE_URL}/TalentUser/getTalents/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+
 // פונקציה לעדכון נתוני המשתמש
 export const updateUserData = async (userId: number, userData: FormData) => {
   const token = localStorage.getItem('authToken');
@@ -232,5 +251,19 @@ export const addComment = async (content: string) => {
   } catch (error) {
     console.error('Error adding comment:', error);
     throw error;
+  }
+};
+// פונקציה להוספת בקשת כישרון חדשה
+export const addTalentRequest = async (talentRequest: { UserId: number; TalentName: string; ParentCategory: number; RequestDate: Date; }) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/TalentRequest`, talentRequest, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
   }
 };
