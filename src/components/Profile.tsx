@@ -48,10 +48,13 @@ const Profile = () => {
         <button onClick={() => navigate('/matches')} className="profile-button">
           צפייה בהתאמות
         </button>
+        {user.isAdmin && (
+          <button onClick={() => navigate('/talent-requests')} className="profile-button">
+הצגת הכשרונות להתווספות    </button>
+        )}
       </div>
     </div>
   );
 };
-
 
 export default Profile;

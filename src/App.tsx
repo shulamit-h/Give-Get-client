@@ -10,6 +10,8 @@ import UpdateProfile from './components/UpdateProfile';
 import Comments from './components/Comments';
 import Talents from './components/Talents';
 import About from './components/About';
+import TalentRequests from './components/TalentRequests';
+
 
 
 const theme = createTheme({
@@ -50,6 +52,7 @@ const App = () => {
           <Route path="/comments" element={<Comments />} />
           <Route path="/talents" element={<Talents />} />
           <Route path="/about" element={<About />} />
+          <Route path="/talent-requests" element={<TalentRequests />} />
         </Routes>
       </Router>
     </ThemeProvider>

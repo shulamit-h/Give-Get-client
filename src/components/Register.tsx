@@ -5,12 +5,7 @@ import { registerUser, fetchTalentsByParent } from '../api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AuthForm.css';
 import axios from 'axios';
-
-interface Talent {
-  id: number;
-  talentName: string;
-  parentCategory: number;
-}
+import {Talent} from '../Types/Types';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({

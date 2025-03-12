@@ -32,3 +32,11 @@ export interface TalentUser {
   talentId: number;
   isOffered: boolean;
 }
+
+export type Comment  = {
+  id: number;
+  userId: number;
+  userName: string;
+  content: string;
+  profileImage: string;
+}

@@ -3,14 +3,8 @@ import { Container, Typography, TextField, Button, Paper, Avatar, Grid } from '@
 import { fetchComments, addComment } from '../api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Comments.css';
+import { Comment } from '../Types/Types';
 
-interface Comment {
-  id: number;
-  userId: number;
-  userName: string;
-  content: string;
-  profileImage: string;
-}
 
 const Comments = () => {
   const [comments, setComments] = useState<Comment[]>([]);

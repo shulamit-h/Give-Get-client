@@ -267,3 +267,32 @@ export const addTalentRequest = async (talentRequest: { UserId: number; TalentNa
     throw error.response ? error.response.data : error.message;
   }
 };
+export const fetchTalentRequests = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/TalentRequest`);
+    return response.data;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+export const deleteTalentRequest = async (id: number) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/TalentRequest/${id}`);
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+export const updateTalentRequest = async (id: number, updatedTalent: any) => {
+  try {
+    await axios.put(`${API_BASE_URL}/TalentRequest/${id}`, updatedTalent, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
