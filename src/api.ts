@@ -164,6 +164,35 @@ export const fetchUserData = async () => {
   }
 };
 
+export const fetchUserById = async (userId: number) => {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+  try {
+    const response = await axios.get(`${API_BASE_URL}/User/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // מחזיר את כל המשתמש
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return null;  // אם יש שגיאה מחזיר null
+  }
+};
+
+
+// פונקציה לשליפת כישרון לפי ID
+export const fetchTalentById = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/Talent/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching talent by ID:', error);
+    throw error;
+  }
+};
+
 // פונקציה להבאת רשימת הכישורים לפי קטגורית האב
 export const fetchTalentsByParent = async (parentId: number) => {
   try {
@@ -267,28 +296,46 @@ export const addTalentRequest = async (talentRequest: { UserId: number; TalentNa
     throw error.response ? error.response.data : error.message;
   }
 };
+// פונקציה לשליפת בקשות הכישרונות
 export const fetchTalentRequests = async () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
   try {
-    const response = await axios.get(`${API_BASE_URL}/TalentRequest`);
+    const response = await axios.get(`${API_BASE_URL}/TalentRequest`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return response.data;
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
   }
 };
-
+// פונקציה למחיקת בקשת כישרון
 export const deleteTalentRequest = async (id: number) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
   try {
-    await axios.delete(`${API_BASE_URL}/TalentRequest/${id}`);
+    await axios.delete(`${API_BASE_URL}/TalentRequest/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
   } catch (error: any) {
     throw error.response ? error.response.data : error.message;
   }
 };
-
+// פונקציה לעדכון בקשת כישרון
 export const updateTalentRequest = async (id: number, updatedTalent: any) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
   try {
     await axios.put(`${API_BASE_URL}/TalentRequest/${id}`, updatedTalent, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       }
     });
   } catch (error: any) {
@@ -296,3 +343,23 @@ export const updateTalentRequest = async (id: number, updatedTalent: any) => {
   }
 };
 
+export const getProfileImage = async (userId: number) => {
+  const response = await axios.get(`${API_BASE_URL}/user/profile-image/${userId}`, {
+    responseType: 'arraybuffer'
+  });
+  const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
+  return URL.createObjectURL(imageBlob);
+};
+
+export const fetchDealsByUser = async (userId: number) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
+  const response = await axios.get(`${API_BASE_URL}/exchange/searchByUser?userId=${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, TextField, Button, Paper, Avatar, Grid } from '@mui/material';
-import { fetchComments, addComment } from '../api';
+import { fetchComments, addComment, getProfileImage, fetchUserById } from '../api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Comments.css';
 import { Comment } from '../Types/Types';
-
+import HeaderFooter from './HeaderFooter';
 
 const Comments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -16,7 +16,22 @@ const Comments = () => {
     const fetchAllComments = async () => {
       try {
         const response = await fetchComments();
-        setComments(response);
+
+        // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
+        const commentsWithUserDetails = await Promise.all(
+          response.map(async (comment: Comment) => {
+            if (comment.userId !== 0) {
+              // const user = await fetchUserById(comment.userId);
+              const profileImage = await getProfileImage(comment.userId);
+              // return { ...comment, userName: user ? user.userName : "לא ידוע", profileImage };
+              return { ...comment,profileImage };
+
+            }
+            return comment;
+          })
+        );
+
+        setComments(commentsWithUserDetails);
       } catch (error) {
         console.error('Error fetching comments:', error);
       }
@@ -36,7 +51,22 @@ const Comments = () => {
       setNewComment('');
       setError(null);
       const response = await fetchComments();
-      setComments(response);
+
+      // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
+      const commentsWithUserDetails = await Promise.all(
+        response.map(async (comment: Comment) => {
+          if (comment.userId !== 0) {
+            // const user = await fetchUserById(comment.userId);
+            const profileImage = await getProfileImage(comment.userId);
+            // return { ...comment, userName: user ? user.userName : "לא ידוע", profileImage };
+            return { ...comment,profileImage };
+            
+          }
+          return comment;
+        })
+      );
+
+      setComments(commentsWithUserDetails);
     } catch (error) {
       console.error('Error adding comment:', error);
       setError('הוספת התגובה נכשלה.');
@@ -44,44 +74,46 @@ const Comments = () => {
   };
 
   return (
-    <Container maxWidth="md" className="comments-container">
-      <Typography variant="h4" gutterBottom>
-        תגובות
-      </Typography>
-      <div className="comments-grid">
-        {comments.map((comment) => (
-          <Paper key={comment.id} elevation={3} className="comment-card">
-            <Grid container spacing={2}>
-              <Grid item>
-                <Avatar src={comment.profileImage} alt={comment.userName} />
-              </Grid>
-              <Grid item xs>
-                <Typography variant="h6">{comment.userName}</Typography>
-                <Typography variant="body1">{comment.content}</Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        ))}
-      </div>
-      <Paper elevation={3} className="add-comment-card">
-        <Typography variant="h6" gutterBottom>
-          הוסף תגובה
+    <HeaderFooter>
+      <Container maxWidth="md" className="comments-container">
+        <Typography variant="h4" gutterBottom>
+          תגובות
         </Typography>
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          variant="outlined"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          error={!!error}
-          helperText={error}
-        />
-        <Button variant="contained" color="primary" onClick={handleAddComment}>
-          הוסף תגובה
-        </Button>
-      </Paper>
-    </Container>
+        <div className="comments-grid">
+          {comments.map((comment) => (
+            <Paper key={comment.id} elevation={3} className="comment-card">
+              <Grid container spacing={2}>
+                <Grid item>
+                  <Avatar src={comment.profileImage}  />
+                </Grid>
+                <Grid item xs>
+                  {/* <Typography variant="h6">{comment.userName}</Typography> */}
+                  <Typography variant="body1">{comment.content}</Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          ))}
+        </div>
+        <Paper elevation={3} className="add-comment-card">
+          <Typography variant="h6" gutterBottom>
+            הוסף תגובה
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            error={!!error}
+            helperText={error}
+          />
+          <Button variant="contained" color="primary" onClick={handleAddComment}>
+            הוסף תגובה
+          </Button>
+        </Paper>
+      </Container>
+    </HeaderFooter>
   );
 };
 

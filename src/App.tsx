@@ -11,8 +11,7 @@ import Comments from './components/Comments';
 import Talents from './components/Talents';
 import About from './components/About';
 import TalentRequests from './components/TalentRequests';
-
-
+import Exchange from './components/Exchange';
 
 const theme = createTheme({
   palette: {
@@ -47,12 +46,13 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/*" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/comments" element={<Comments />} />
           <Route path="/talents" element={<Talents />} />
           <Route path="/about" element={<About />} />
           <Route path="/talent-requests" element={<TalentRequests />} />
+          <Route path="/exchange" element={<Exchange />} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -275,7 +275,7 @@ const UpdateProfile = () => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
+    <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form-update">
       <Typography variant="h6" className="form-title">עדכון פרופיל</Typography>
       {error && <Alert severity="error">{error}</Alert>}
       {success && (

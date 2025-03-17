@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Paper, Grid, TextField, Box, MenuItem, Select, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import { fetchTalentsByParent, addTalentRequest } from '../api';
-import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import '../styles/Talents.css';
+import HeaderFooter from './HeaderFooter';
 
 interface Talent {
   id: number;
@@ -46,7 +48,14 @@ const Talents = () => {
     }
 
     try {
-      const userId = token ? 1 : 0; // החלף את זה במזהה המשתמש האמיתי אם יש טוקן
+      const token = localStorage.getItem('authToken');
+      let userId = 0; // ברירת מחדל אם אין טוקן
+      if (token) {
+        const decodedToken: any = jwtDecode(token); // פענוח הטוקן
+        console.log('Decoded Token:', decodedToken); // הוסף שורת הדפסה כאן
+        userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || 0;
+      }
+
       const talentRequest = {
         UserId: userId,
         TalentName: newTalentName,
@@ -59,6 +68,8 @@ const Talents = () => {
       setParentTalentId('');
       setError(null);
       setSnackbarMessage('בקשת הוספת הכשרון התבצע בהצלחה.');
+
+      // עדכון רשימת הכשרונות
       const response = await fetchTalentsByParent(0);
       const talentsWithSubTalents = await Promise.all(
         response.map(async (talent: Talent) => {
@@ -73,7 +84,9 @@ const Talents = () => {
     }
   };
 
+
   return (
+    <HeaderFooter>
     <Container maxWidth="md" className="talents-container">
       <Typography variant="h4" gutterBottom>
         הכישרונות שלנו
@@ -136,6 +149,7 @@ const Talents = () => {
         </Alert>
       </Snackbar>
     </Container>
+    </HeaderFooter>
   );
 };
 

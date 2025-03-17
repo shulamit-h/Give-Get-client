@@ -40,3 +40,12 @@ export type Comment  = {
   content: string;
   profileImage: string;
 }
+
+export type TalentRequest = {
+  id: number;
+  userName: string;
+  userId: number;
+  talentName: string;
+  parentCategory: string;
+  requestDate: string;
+}

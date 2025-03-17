@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchUserData } from '../api'; // ייבוא הפונקציה מה-API
+import { useNavigate, Route, Routes } from 'react-router-dom';
+import { fetchUserData, fetchTalentsByUserId, fetchTalentById } from '../api'; // ייבוא הפונקציות מה-API
 import '../styles/Profile.css'; // הוסף את קובץ ה-CSS שלך
+import HomeIcon from '@mui/icons-material/Home'; // ייבוא של אייקון הבית
+import { IconButton, Avatar, Typography, Button } from '@mui/material';
+import UpdateProfile from './UpdateProfile'; 
+import Exchange from './Exchange';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
+  const [talents, setTalents] = useState<any[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,35 +29,124 @@ const Profile = () => {
     getUserData();
   }, [navigate]);
 
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate('/login');
+  };
+
+  const handleViewDetails = () => {
+    setErrorMessage(null); // Reset error message
+    navigate('/profile'); // Navigate to the profile details route
+  };
+
+  const handleViewTalents = async () => {
+    if (user) {
+      try {
+        const talents = await fetchTalentsByUserId(user.id);
+        const talentDetails = await Promise.all(
+          talents.map(async (talent: any) => {
+            const details = await fetchTalentById(talent.talentId);
+            return { ...details, isOffered: talent.isOffered };
+          })
+        );
+        setTalents(talentDetails);
+        setErrorMessage(null); // Reset error message
+        navigate('/profile/talents'); // Navigate to the talents route
+      } catch (error) {
+        console.error('Error fetching talents:', error);
+        setErrorMessage('לא נמצאו כשרונות עבור המשתמש הנתון.');
+      }
+    }
+  };
+
+  const handleUpdateProfile = () => {
+    setErrorMessage(null); // Reset error message
+    navigate('/profile/update'); // Navigate to the update profile route
+  };
+
+  const handleViewMatches = () => {
+    setErrorMessage(null); // Reset error message
+    navigate(`/profile/exchange?userId=${user.id}`); // Navigate to the exchange route with user ID
+  };
+
   if (!user) return <div>Loading...</div>;
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <h1>שלום, {user.userName}</h1>
-        <div className="profile-image-container">
-          <img src={user.profileImageUrl} alt="Profile" className="profile-image" />
+      <div className="header-buttons">
+        <button onClick={handleLogout} className="logout-button">
+          התנתקות
+        </button>
+        <IconButton onClick={() => navigate('/')} className="home-button">
+          <HomeIcon />
+        </IconButton>
+      </div>
+      <div className="profile-content">
+        <div className="sidebar">
+          <Button onClick={handleViewDetails} className="menu-button">פרטים</Button>
+          <Button onClick={handleViewTalents} className="menu-button">כשרונות</Button>
+          <Button onClick={handleUpdateProfile} className="menu-button">עדכון פרופיל</Button>
+          <Button onClick={handleViewMatches} className="menu-button">התאמות</Button>
         </div>
-      </div>
+        <div className="main-content">
+          <div className="profile-header">
+            <Avatar alt={user.userName} src={user.profileImageUrl} className="profile-image" />
+            <Typography variant="h6" className="profile-title">שלום, {user.userName}</Typography>
+          </div>
 
-      <div className="profile-details">
-        <p><strong>שם משתמש:</strong> {user.userName}</p>
-        <p><strong>אימייל:</strong> {user.email}</p>
-        <p><strong>תפקיד:</strong> {user.isAdmin ? 'מנהל' : 'משתמש'}</p>
-        {/* הוספת פרטי מידע נוספים */}
-      </div>
+          {errorMessage && (
+            <div className="error-message">{errorMessage}</div>
+          )}
 
-      <div className="profile-actions">
-        <button onClick={() => navigate('/update-profile')} className="profile-button">
-          עדכון פרופיל
-        </button>
-        <button onClick={() => navigate('/matches')} className="profile-button">
-          צפייה בהתאמות
-        </button>
-        {user.isAdmin && (
-          <button onClick={() => navigate('/talent-requests')} className="profile-button">
-הצגת הכשרונות להתווספות    </button>
-        )}
+          <Routes>
+            <Route path="/" element={
+              <div className="profile-details">
+                <p><strong>שם משתמש:</strong> {user.userName}</p>
+                <p><strong>אימייל:</strong> {user.email}</p>
+                <p><strong>מספר טלפון:</strong> {user.phoneNumber}</p>
+                <p><strong>תפקיד:</strong> {user.isAdmin ? 'מנהל' : 'משתמש'}</p>
+                <p><strong>גיל:</strong> {user.age}</p>
+                <p><strong>מין:</strong> {user.gender === 'Male' ? 'זכר' : 'נקבה'}</p>
+                <p><strong>ציון:</strong> {user.score}</p>
+                <p><strong>פעיל:</strong> {user.isActive ? 'כן' : 'לא'}</p>
+                <p><strong>תאור:</strong> {user.desc}</p>
+              </div>
+            } />
+            <Route path="talents" element={
+              <div className="profile-talents">
+                <h2>הכשרונות שלי</h2>
+                {talents.length === 0 ? (
+                  <div className="no-talents-message">לא נמצאו לך כשרונות. נסה שוב מאוחר יותר.</div>
+                ) : (
+                  <div className="talents-container">
+                    <div className="offered-talents">
+                      <h3>כשרונות מוצעים</h3>
+                      <ul>
+                        {talents
+                          .filter(talent => talent.isOffered)
+                          .map(talent => (
+                            <li key={talent.id}>{talent.talentName}</li>
+                          ))}
+                      </ul>
+                    </div>
+                    <div className="wanted-talents">
+                      <h3>כשרונות רצויים</h3>
+                      <ul>
+                        {talents
+                          .filter(talent => !talent.isOffered)
+                          .map(talent => (
+                            <li key={talent.id}>{talent.talentName}</li>
+                          ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+            } />
+            <Route path="update" element={<UpdateProfile />} />
+            <Route path="exchange" element={<Exchange />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );

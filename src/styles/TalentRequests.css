@@ -1,8 +1,16 @@
 .talent-request-card {
-    padding: 20px;
-    margin: 10px 0;
-  }
-  
-  .talent-request-card button {
-    margin-right: 10px;
-  }
+  padding: 20px;
+  margin: 10px 0;
+}
+
+.req-title {
+  margin-top: 800px; /* שינוי המרחק מהחלק העליון ל-1000 פיקסלים */
+}
+
+.talent-request-card button {
+  margin-right: 10px;
+}
+
+.head{
+  margin-top: 1050px; 
+}

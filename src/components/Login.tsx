@@ -57,7 +57,7 @@ function Login() {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
+    <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form-login">
       <Typography variant="h6" className="form-title">התחברות</Typography>
       {error && <Alert severity="error">{error}</Alert>}
       <TextField

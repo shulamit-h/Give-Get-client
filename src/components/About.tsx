@@ -1,9 +1,11 @@
 import React from 'react';
 import { Container, Typography, Paper, Grid } from '@mui/material';
 import '../styles/About.css';
+import HeaderFooter from './HeaderFooter';
 
 const About = () => {
   return (
+    <HeaderFooter>
       <Container maxWidth="md" className="about-container">
         <Typography variant="h3" gutterBottom className="about-title">
           SwapSkills: פלטפורמה להחלפת מיומנויות בין אנשים
@@ -78,6 +80,7 @@ const About = () => {
           בואו והצטרפו אלינו ל-SwapSkills, והתחילו להחליף מיומנויות וידע בצורה מהנה ומועילה!
         </Typography>
       </Container>
+      </HeaderFooter>
   );
 };
 

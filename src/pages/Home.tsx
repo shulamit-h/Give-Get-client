@@ -1,28 +1,13 @@
 import React from 'react';
-import { Container, Grid, Typography, Button, Paper, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Container, Grid, Typography, Button, Paper } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
+import HeaderFooter from '../components/HeaderFooter';
 import '../styles/Home.css';
 
 const Home = () => {
   return (
+    <HeaderFooter>
     <div className="home-container">
-      <AppBar position="sticky" className="app-bar">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className="app-title">
-            אתר הכישרונות
-          </Typography>
-          <Button color="inherit" component={RouterLink} to="/home">דף הבית</Button>
-          <Button color="inherit" component={RouterLink} to="/about">אודות</Button>
-          <Button color="inherit" component={RouterLink} to="/comments">תגובות</Button>
-          <Button color="inherit" component={RouterLink} to="/login">התחברות</Button>
-          <Button color="inherit" component={RouterLink} to="/talents">הכישרונות שלנו</Button>
-        </Toolbar>
-      </AppBar>
-
       <section className="hero-section">
         <Container maxWidth="xl" className="hero-container">
           <Typography variant="h2" className="hero-title">
@@ -78,15 +63,8 @@ const Home = () => {
           </Grid>
         </Container>
       </section>
-      
-      <footer className="footer">
-        <Container maxWidth="xl">
-          <Typography variant="body2" align="center">
-            © 2023 אתר הכישרונות. כל הזכויות שמורות.
-          </Typography>
-        </Container>
-      </footer>
     </div>
+    </HeaderFooter>
   );
 };
 
