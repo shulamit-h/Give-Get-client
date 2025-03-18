@@ -6,6 +6,7 @@ import HomeIcon from '@mui/icons-material/Home'; // ייבוא של אייקון
 import { IconButton, Avatar, Typography, Button } from '@mui/material';
 import UpdateProfile from './UpdateProfile'; 
 import Exchange from './Exchange';
+import TalentRequests from './TalentRequests'; // ייבוא הקומפוננטה החדשה
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -69,6 +70,11 @@ const Profile = () => {
     navigate(`/profile/exchange?userId=${user.id}`); // Navigate to the exchange route with user ID
   };
 
+  const handleViewTalentRequests = () => {
+    setErrorMessage(null); // Reset error message
+    navigate('/profile/talent-requests'); // Navigate to the talent requests route
+  };
+
   if (!user) return <div>Loading...</div>;
 
   return (
@@ -87,6 +93,11 @@ const Profile = () => {
           <Button onClick={handleViewTalents} className="menu-button">כשרונות</Button>
           <Button onClick={handleUpdateProfile} className="menu-button">עדכון פרופיל</Button>
           <Button onClick={handleViewMatches} className="menu-button">התאמות</Button>
+          {user.isAdmin && (
+            <Button onClick={handleViewTalentRequests} className="menu-button">
+              ניהול בקשת הכשרונות
+            </Button>
+          )}
         </div>
         <div className="main-content">
           <div className="profile-header">
@@ -145,6 +156,7 @@ const Profile = () => {
             } />
             <Route path="update" element={<UpdateProfile />} />
             <Route path="exchange" element={<Exchange />} />
+            <Route path="talent-requests" element={<TalentRequests />} />
           </Routes>
         </div>
       </div>

@@ -33,7 +33,7 @@ const TalentRequests: React.FC = () => {
               return { id: request.parentCategory, name: "קטגוריה ראשית" };
             }
             const parentTalent = await fetchTalentById(parseInt(request.parentCategory));
-            return { id: request.parentCategory, name: parentTalent ? parentTalent.talentName : "לא ידוע" };
+            return { id: request.parentCategory, name: parentTalent ? parentTalent.talentName : "קטגוריה ראשית" };
           })
         );
 
