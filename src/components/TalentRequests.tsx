@@ -47,10 +47,14 @@ const TalentRequests: React.FC = () => {
         console.error('Error fetching talent requests:', error);
       }
     };
-  
+    // הגדרת polling
+    const interval = setInterval(() => {
+      fetchRequests();
+    }, 3000); // כל 5 שניות
+
     fetchRequests();
   }, []);
-  
+
   const handleDelete = async (id: number) => {
     setOpenDialog(prev => ({ ...prev, [id]: true }));
   };
@@ -71,7 +75,7 @@ const TalentRequests: React.FC = () => {
   };
 
   const handleEdit = (request: TalentRequest) => {
-    console.log("Editing request:", request); 
+    console.log("Editing request:", request);
     setEditMode({ ...editMode, [request.id]: true });
     setEditedTalent({ ...request });
   };
@@ -85,7 +89,7 @@ const TalentRequests: React.FC = () => {
   const handleUpdate = async (id: number) => {
     if (!editedTalent) return;
     try {
-      console.log("Updating talent request:", editedTalent); 
+      console.log("Updating talent request:", editedTalent);
       await updateTalentRequest(id, editedTalent);
       setTalentRequests(prevRequests =>
         prevRequests.map(req => (req.id === id ? editedTalent : req))
@@ -100,7 +104,7 @@ const TalentRequests: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log(`Changing field ${name} to ${value}`); 
+    console.log(`Changing field ${name} to ${value}`);
     setEditedTalent(prev => (prev ? { ...prev, [name]: value } : prev));
   };
 
@@ -111,7 +115,7 @@ const TalentRequests: React.FC = () => {
           בקשות להוספת כשרונות
         </Typography>
         {talentRequests.map((request) => {
-          console.log("Rendering request:", request); 
+          console.log("Rendering request:", request);
           return (
             <Paper key={request.id} className="talent-request-card">
               {editMode[request.id] && editedTalent?.id === request.id ? (

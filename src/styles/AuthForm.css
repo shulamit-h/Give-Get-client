@@ -7,8 +7,7 @@
 .auth-form-login {
   display: flex;
   flex-direction: column;
-  margin-top: 5%;
-  
+  margin-top: 5%;  
 
 }
 .auth-form-update{
@@ -58,4 +57,26 @@ input{
   width: 100px;
   align-items: center;
 
+}
+
+.home-icon {
+  position: absolute;
+  top: 5px; /* מיקום גבוה יותר */
+  right: 5px; /* בצד ימין */
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.register-link a {
+  text-decoration: none;
+  color: #ff6f61;
+  font-weight: bold;
+}
+
+.register-link a:hover {
+  color: #ff9a8b;
 }

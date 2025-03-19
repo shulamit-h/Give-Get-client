@@ -1,38 +1,80 @@
 .deals-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  padding: 20px;
+  background-color: #fceff7; /* צבע רקע עדין */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto; /* מרכז את התוכן */
+}
 
-  .no-deals-message {
-    padding: 20px;
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 18px;
-  }
-  
-  
-  .deals-container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .deals-container ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .deals-container li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .deals-container li:last-child {
-    border-bottom: none;
-  }
-  
+.deals-container h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #2c3e50; /* צבע כותרת כהה */
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid #f38aa4; /* קו תחתון */
+  padding-bottom: 10px;
+}
+
+.deals-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.deal-item {
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deal-item:hover {
+  transform: translateY(-5px); /* אפקט הרמה */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* צל חזק יותר */
+}
+
+.deal-item div {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #34495e; /* צבע טקסט כהה */
+}
+
+.deal-item div strong {
+  color: #2c3e50; /* צבע טקסט מודגש */
+}
+
+.deal-item div.status {
+  font-weight: bold;
+  color: #3498db; /* צבע סטטוס */
+}
+
+.deal-item div.date {
+  font-style: italic;
+  color: #7f8c8d; /* צבע תאריך */
+}
+
+.deal-item div.user {
+  color: #e73c97; /* צבע שמות משתמשים */
+}
+
+.deal-item div.talent {
+  color: #5d7be1; /* צבע שמות כישרונות */
+}
+
+.no-deals-message {
+  padding: 20px;
+  margin: 20px auto;
+  background-color: #ffe6e6; /* צבע רקע עדין */
+  color: #d9534f; /* צבע טקסט אדום */
+  border: 1px solid #f5c6cb; /* מסגרת בצבע עדין */
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  max-width: 600px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

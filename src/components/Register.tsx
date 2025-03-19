@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar, FormControl, InputLabel, Select, Checkbox, ListItemText, SelectChangeEvent } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff,Home } from '@mui/icons-material';
 import { registerUser, fetchTalentsByParent } from '../api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import '../styles/AuthForm.css';
 import axios from 'axios';
 import {Talent} from '../Types/Types';
@@ -163,6 +163,14 @@ const Register: React.FC = () => {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate className="auth-form">
+      <IconButton
+      component={Link}
+      to="/"
+      className="home-icon"
+      aria-label="Go to home"
+    >
+      <Home />
+    </IconButton>
       <Typography variant="h6" className="form-title">הרשמה</Typography>
       {error && <Alert severity="error">{error}</Alert>}
       {success && (
@@ -364,6 +372,12 @@ const Register: React.FC = () => {
       <Button type="submit" fullWidth variant="contained" className="submit-btn">
         הרשמה
       </Button>
+      <Typography variant="body2" className="register-link">
+      כבר רשום?{' '}
+      <Link to="/login">
+        התחבר
+      </Link>
+    </Typography>
     </Box>
   );
 }

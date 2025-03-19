@@ -129,7 +129,7 @@ const Profile = () => {
                 {talents.length === 0 ? (
                   <div className="no-talents-message">לא נמצאו לך כשרונות. נסה שוב מאוחר יותר.</div>
                 ) : (
-                  <div className="talents-container">
+                  <div className="my-talents-container">
                     <div className="offered-talents">
                       <h3>כשרונות מוצעים</h3>
                       <ul>

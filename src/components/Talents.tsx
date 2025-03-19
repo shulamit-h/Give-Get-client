@@ -87,69 +87,76 @@ const Talents = () => {
 
   return (
     <HeaderFooter>
-    <Container maxWidth="md" className="talents-container">
-      <Typography variant="h4" gutterBottom>
-        הכישרונות שלנו
-      </Typography>
-      <Grid container spacing={2}>
-        {talents.map((talent) => (
-          <Grid item xs={12} key={talent.id}>
-            <Paper elevation={3} className="talent-card">
-              <Typography variant="h6">{talent.talentName}</Typography>
-              <Box ml={2}>
-                {talent.subTalents?.map((subTalent) => (
-                  <Typography key={subTalent.id} variant="body1">
-                    - {subTalent.talentName}
-                  </Typography>
-                ))}
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-      <Paper elevation={3} className="add-talent-card">
-        <Typography variant="h6" gutterBottom>
-          הוסף כישרון
+      <Container maxWidth="md" className="talents-container">
+        <Typography variant="h4" gutterBottom>
+          הכישרונות שלנו
         </Typography>
-        <FormControl fullWidth variant="outlined" margin="normal">
-          <InputLabel>קטגוריה</InputLabel>
-          <Select
-            value={parentTalentId}
-            onChange={(e) => setParentTalentId(e.target.value)}
-            label="בחר כישרון אב"
-          >
-            {parentTalents.map((talent) => (
-              <MenuItem key={talent.id} value={talent.id}>
-                {talent.talentName}
-              </MenuItem>
-            ))}
-            <MenuItem value="other">אחר</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          fullWidth
-          variant="outlined"
-          value={newTalentName}
-          onChange={(e) => setNewTalentName(e.target.value)}
-          error={!!error}
-          helperText={error}
-          margin="normal"
-        />
-        <Button variant="contained" color="primary" onClick={handleAddTalentRequest}>
-          הוסף כישרון
-        </Button>
-      </Paper>
-      <Snackbar
-        open={!!snackbarMessage}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarMessage(null)}
-      >
-        <Alert onClose={() => setSnackbarMessage(null)} severity="success">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+
+        {/* רשימת הכישרונות */}
+        <Grid container spacing={2}>
+          {talents.map((talent) => (
+            <Grid item xs={12} key={talent.id}>
+              <Paper elevation={3} className="talent-card">
+                <Typography variant="h6" className="talent-name">{talent.talentName}</Typography>
+                <Box ml={2} className="sub-talents">
+                  {talent.subTalents?.map((subTalent) => (
+                    <Typography key={subTalent.id} variant="body1" className="sub-talent">
+                      - {subTalent.talentName}
+                    </Typography>
+                  ))}
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* רכיב הוספת כישרון */}
+        <Box className="add-talent-wrapper">
+          <Paper elevation={3} className="add-talent-card">
+            <Typography variant="h6" gutterBottom>
+              הוסף כישרון
+            </Typography>
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <InputLabel>קטגוריה</InputLabel>
+              <Select
+                value={parentTalentId}
+                onChange={(e) => setParentTalentId(e.target.value)}
+                label="בחר כישרון אב"
+              >
+                {parentTalents.map((talent) => (
+                  <MenuItem key={talent.id} value={talent.id}>
+                    {talent.talentName}
+                  </MenuItem>
+                ))}
+                <MenuItem value="other">אחר</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              fullWidth
+              variant="outlined"
+              value={newTalentName}
+              onChange={(e) => setNewTalentName(e.target.value)}
+              error={!!error}
+              helperText={error}
+              margin="normal"
+            />
+            <Button variant="contained" color="primary" onClick={handleAddTalentRequest}>
+              הוסף כישרון
+            </Button>
+          </Paper>
+        </Box>
+        <Snackbar
+          open={!!snackbarMessage}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarMessage(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // מיקום ההודעה
+        >
+          <Alert onClose={() => setSnackbarMessage(null)} severity="success">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
     </Container>
-    </HeaderFooter>
+    </HeaderFooter >
   );
 };
 
