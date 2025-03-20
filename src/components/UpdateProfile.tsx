@@ -47,6 +47,27 @@ const UpdateProfile = () => {
         const userData = await fetchUserData();
         setUserId(userData.id);
 
+        const talentsData = await fetchTalentsByUserId(userData.id);
+        const offeredTalents = talentsData.filter((talent: TalentUser) => talent.isOffered).map((talent: TalentUser) => talent.talentId);
+        const wantedTalents = talentsData.filter((talent: TalentUser) => !talent.isOffered).map((talent: TalentUser) => talent.talentId);
+
+        // Fetch all talents and sub-talents
+        const allTalents = await fetchAllTalentsWithSubTalents();
+
+        // Ensure parent talents are selected if any sub-talents are selected
+        const parentOfferedTalents = new Set<number>(offeredTalents);
+        const parentWantedTalents = new Set<number>(wantedTalents);
+
+        Object.keys(allTalents).forEach((parentId: string) => {
+          const parentIntId = parseInt(parentId, 10);
+          if (allTalents[parentIntId]?.some((subTalent: Talent) => offeredTalents.includes(subTalent.id))) {
+            parentOfferedTalents.add(parentIntId);
+          }
+          if (allTalents[parentIntId]?.some((subTalent: Talent) => wantedTalents.includes(subTalent.id))) {
+            parentWantedTalents.add(parentIntId);
+          }
+        });
+
         setFormData({
           username: userData.userName,
           email: userData.email,
@@ -56,69 +77,39 @@ const UpdateProfile = () => {
           desc: userData.desc,
           profileImage: null,
           phoneNumber: userData.phoneNumber,
-          offeredTalents: [],
-          wantedTalents: [],
+          offeredTalents: Array.from(parentOfferedTalents),
+          wantedTalents: Array.from(parentWantedTalents),
         });
         setFileName(userData.profile);
-
-        try {
-          const talentsData = await fetchTalentsByUserId(userData.id);
-          const offeredTalents = talentsData.filter((talent: TalentUser) => talent.isOffered).map((talent: TalentUser) => talent.talentId);
-          const wantedTalents = talentsData.filter((talent: TalentUser) => !talent.isOffered).map((talent: TalentUser) => talent.talentId);
-
-          const allSelectedTalents = ensureParentSelected([...offeredTalents, ...wantedTalents]);
-
-          setFormData(prevFormData => ({
-            ...prevFormData,
-            offeredTalents: allSelectedTalents.filter(talent => offeredTalents.includes(talent)),
-            wantedTalents: allSelectedTalents.filter(talent => wantedTalents.includes(talent)),
-          }));
-          setExistingOfferedTalents(allSelectedTalents.filter(talent => offeredTalents.includes(talent)));
-          setExistingWantedTalents(allSelectedTalents.filter(talent => wantedTalents.includes(talent)));
-
-          await Promise.all([
-            ...offeredTalents.map((talentId: number) => fetchSubTalents(talentId)),
-            ...wantedTalents.map((talentId: number) => fetchSubTalents(talentId)),
-          ]);
-        } catch (talentError) {
-          console.error('Error fetching talents:', talentError);
-          setError('לא נמצאו כשרונות למשתמש זה');
-        }
+        setExistingOfferedTalents(Array.from(parentOfferedTalents));
+        setExistingWantedTalents(Array.from(parentWantedTalents));
       } catch (error) {
         console.error('Error fetching user data:', error);
         setError('שגיאה בקבלת נתוני המשתמש');
       }
     };
 
-    const fetchAllTalents = async () => {
+    const fetchAllTalentsWithSubTalents = async () => {
       try {
         const response = await fetchTalentsByParent(0);
         setTalents(response);
-      } catch (error) {
-        console.error('Error fetching all talents:', error);
-      }
-    };
-
-    const fetchSubTalents = async (talentId: number) => {
-      const selectedTalent = talents.find(talent => talent.id === talentId);
-      if (selectedTalent && selectedTalent.parentCategory === 0) {
-        try {
-          const response = await fetchTalentsByParent(talentId);
+        const allTalents: { [key: number]: Talent[] } = {};
+        await Promise.all(response.map(async (talent: Talent) => {
+          const subTalentsResponse = await fetchTalentsByParent(talent.id);
+          allTalents[talent.id] = subTalentsResponse;
           setSubTalents(prevSubTalents => ({
             ...prevSubTalents,
-            [talentId]: response,
+            [talent.id]: subTalentsResponse,
           }));
-        } catch (error) {
-          console.error('Error fetching sub-talents:', error);
-        }
+        }));
+        return allTalents;
+      } catch (error) {
+        console.error('Error fetching all talents:', error);
+        return {};
       }
     };
 
-    const init = async () => {
-      await getUserData();
-      await fetchAllTalents();
-    };
-    init();
+    getUserData();
   }, [navigate]);
 
 
@@ -169,15 +160,23 @@ const UpdateProfile = () => {
   const handleTalentChange = async (e: SelectChangeEvent<number[]>, type: 'offered' | 'wanted') => {
     const selectedTalents = e.target.value as number[];
 
-    // הבטחת סימון של כל ההורים הרלוונטיים
-    const finalSelectedTalents = ensureParentSelected(selectedTalents);
+    // Check if any parent talent is being deselected
+    const deselectedParents = formData[type === 'offered' ? 'offeredTalents' : 'wantedTalents'].filter(talentId => !selectedTalents.includes(talentId));
+
+    // Collect all sub-talents of the deselected parent talents
+    const subTalentsToDeselect = deselectedParents.flatMap(parentId => {
+      return subTalents[parentId]?.map(subTalent => subTalent.id) || [];
+    });
+
+    // Create the final list of selected talents, excluding sub-talents of deselected parents
+    const finalSelectedTalents = selectedTalents.filter(talentId => !subTalentsToDeselect.includes(talentId));
 
     setFormData((prevData) => ({
       ...prevData,
       [type === 'offered' ? 'offeredTalents' : 'wantedTalents']: finalSelectedTalents,
     }));
 
-    // טעינת תתי-כישרונות עבור כישרונות ראשיים שנבחרו
+    // Fetch sub-talents for the newly selected main talents
     for (const talentId of finalSelectedTalents) {
       if (!subTalents[talentId]) {
         try {
@@ -206,7 +205,7 @@ const UpdateProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     const newFieldErrors = {
       username: !formData.username,
       email: !formData.email,
@@ -216,7 +215,7 @@ const UpdateProfile = () => {
       phoneNumber: !formData.phoneNumber,
       desc: !formData.desc,
     };
-  
+
     if (Object.values(newFieldErrors).some(error => error)) {
       setFieldErrors(newFieldErrors);
       setError('נא למלא את כל השדות החובה המסומנים באדום.');
@@ -236,67 +235,67 @@ const UpdateProfile = () => {
       } else if (newFieldErrors.desc) {
         descRef.current?.scrollIntoView({ behavior: 'smooth' });
       }
-  
+
       return;
     }
-  
-  // בדיקה אם יש כשרון שנבחר גם ברשימת הכשרונות המוצעים וגם ברשימת הכשרונות הרצויים
-  const commonTalents = formData.offeredTalents.filter(talentId => formData.wantedTalents.includes(talentId));
-  
-  const hasCommonParentTalentWithDifferentSubTalents = commonTalents.some(talentId => {
-    const offeredSubTalents = subTalents[talentId]?.filter(subTalent => formData.offeredTalents.includes(subTalent.id)) || [];
-    const wantedSubTalents = subTalents[talentId]?.filter(subTalent => formData.wantedTalents.includes(subTalent.id)) || [];
 
-    const isParentTalentWithoutSubTalents = offeredSubTalents.length === 0 && wantedSubTalents.length === 0;
+    // בדיקה אם יש כשרון שנבחר גם ברשימת הכשרונות המוצעים וגם ברשימת הכשרונות הרצויים
+    const commonTalents = formData.offeredTalents.filter(talentId => formData.wantedTalents.includes(talentId));
 
-    // אם זה שני תתי כשרונות ואותו אב אך התתי כשרונות שונים זה כן טוב
-    const hasDifferentSubTalents = offeredSubTalents.length > 0 && wantedSubTalents.length > 0 && !offeredSubTalents.every(subTalent => wantedSubTalents.includes(subTalent));
+    const hasCommonParentTalentWithDifferentSubTalents = commonTalents.some(talentId => {
+      const offeredSubTalents = subTalents[talentId]?.filter(subTalent => formData.offeredTalents.includes(subTalent.id)) || [];
+      const wantedSubTalents = subTalents[talentId]?.filter(subTalent => formData.wantedTalents.includes(subTalent.id)) || [];
 
-    return isParentTalentWithoutSubTalents || !hasDifferentSubTalents;
-  });
+      const isParentTalentWithoutSubTalents = offeredSubTalents.length === 0 && wantedSubTalents.length === 0;
 
-  if (commonTalents.length > 0 && hasCommonParentTalentWithDifferentSubTalents) {
-    setError('אין אפשרות לבחור את אותו כשרון גם ברשימת הכשרונות המוצעים וגם ברשימת הכשרונות הרצויים.');
-    errorRef.current?.scrollIntoView({ behavior: 'smooth' });
-    return;
-  }
-  
+      // אם זה שני תתי כשרונות ואותו אב אך התתי כשרונות שונים זה כן טוב
+      const hasDifferentSubTalents = offeredSubTalents.length > 0 && wantedSubTalents.length > 0 && !offeredSubTalents.every(subTalent => wantedSubTalents.includes(subTalent));
+
+      return isParentTalentWithoutSubTalents || !hasDifferentSubTalents;
+    });
+
+    if (commonTalents.length > 0 && hasCommonParentTalentWithDifferentSubTalents) {
+      setError('אין אפשרות לבחור את אותו כשרון גם ברשימת הכשרונות המוצעים וגם ברשימת הכשרונות הרצויים.');
+      errorRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
     // סינון הכשרונות
     const filterTalents = (talentIds: number[], otherTalentIds: number[]) => {
       const filteredTalents: Set<number> = new Set();
-  
+
       talentIds.forEach(talentId => {
         const subTalentIds = subTalents[talentId] || [];
         let hasSelectedSubTalent = false;
-  
+
         subTalentIds.forEach(subTalent => {
           if (formData.offeredTalents.includes(subTalent.id) || formData.wantedTalents.includes(subTalent.id)) {
             filteredTalents.add(subTalent.id);
             hasSelectedSubTalent = true;
           }
         });
-  
+
         // אם לא נבחרו תתי-כשרונות, נוסיף את כשרון האב
         if (!hasSelectedSubTalent) {
           filteredTalents.add(talentId);
         }
       });
-  
+
       return Array.from(filteredTalents).filter(talentId => !otherTalentIds.includes(talentId));
     };
-  
+
     const finalOfferedTalents = filterTalents(formData.offeredTalents, formData.wantedTalents);
     const finalWantedTalents = filterTalents(formData.wantedTalents, formData.offeredTalents);
-  
+
     const talentsToSend = [
       ...finalOfferedTalents.map(talentId => ({ TalentId: talentId, IsOffered: true })),
       ...finalWantedTalents.map(talentId => ({ TalentId: talentId, IsOffered: false })),
     ];
-  
+
     setError(null);
     try {
       const formDataToSend = new FormData();
-  
+
       Object.keys(formData).forEach(key => {
         const value = formData[key as keyof typeof formData];
         if (value !== null && key !== 'offeredTalents' && key !== 'wantedTalents') {
@@ -307,22 +306,22 @@ const UpdateProfile = () => {
           }
         }
       });
-  
+
       if (formData.profileImage && formData.profileImage.name !== 'default_profile_image.png') {
         formDataToSend.append('File', formData.profileImage);
       } else {
         formDataToSend.append('ProfileImage', 'null');
         formDataToSend.append('File', 'null');
       }
-  
+
       if (talentsToSend.length > 0) {
         formDataToSend.append('talents', JSON.stringify(talentsToSend));
       } else {
         formDataToSend.append('talents', JSON.stringify([]));
       }
-  
+
       const response = await updateUserData(userId!, formDataToSend);
-  
+
       console.log('Update successful:', response);
       setSuccess(true);
       setTimeout(() => {
@@ -341,17 +340,9 @@ const UpdateProfile = () => {
   const isTalentChecked = (talentId: number, type: 'offered' | 'wanted') => {
     const selectedTalents = type === 'offered' ? formData.offeredTalents : formData.wantedTalents;
 
-    // בודק אם הכשרון נבחר ישירות
+    // Check if the talent is selected directly or any of its sub-talents are selected
     const isChecked = selectedTalents.includes(talentId) ||
-      // בודק אם הכשרון האב נבחר בגלל שיש לו תתי כשרונות נבחרים
-      selectedTalents.some((subTalentId) => {
-        const subTalent = talents.find((t) => t.id === subTalentId);
-        // אם תת-כשרון קשור לכשרון האב (כשרון האב נמצא תחת ה-parentCategory של תת-כשרון)
-        return subTalent?.parentCategory === talentId;
-      }) ||
-      // אם הכשרון האב (המזהה הוא 0) נבחר בגלל שתתי כשרונות נבחרים
-      (talentId === 0 && talents.some(talent => talent.parentCategory === 0 && selectedTalents.includes(talent.id)));
-
+      talents.some(talent => talent.parentCategory === talentId && selectedTalents.includes(talent.id));
 
     return isChecked;
   };
@@ -489,9 +480,6 @@ const UpdateProfile = () => {
             {talents.map((talent) => (
               <MenuItem key={talent.id} value={talent.id}>
                 <Checkbox checked={isTalentChecked(talent.id, 'offered')} />
-
-
-
                 <ListItemText primary={talent.talentName || 'כישרון ללא שם'} />
               </MenuItem>
             ))}
@@ -519,6 +507,7 @@ const UpdateProfile = () => {
             </FormControl>
           )
         ))}
+
         <FormControl margin="normal" fullWidth>
           <InputLabel id="wanted-talents-label">כישורים רצויים</InputLabel>
           <Select
@@ -531,12 +520,12 @@ const UpdateProfile = () => {
             {talents.map((talent) => (
               <MenuItem key={talent.id} value={talent.id}>
                 <Checkbox checked={isTalentChecked(talent.id, 'wanted')} />
-
                 <ListItemText primary={talent.talentName || 'כישרון ללא שם'} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+
         {formData.wantedTalents.map(talentId => (
           (subTalents[talentId] && subTalents[talentId].length > 0) && (
             <FormControl key={talentId} margin="normal" fullWidth>
