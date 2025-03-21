@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchDealsByUser, fetchUserById, fetchTalentById } from '../api';
+import { fetchDealsByUser, fetchUserById, fetchTalentById } from '../apis/api';
 import '../styles/Exchange.css';
 
 const Exchange = () => {
@@ -53,6 +53,7 @@ const Exchange = () => {
   if (!deals.length) {
     return <div className="no-deals-message">לא נמצאו התאמות בשבילך. נסה שוב מאוחר יותר.</div>;
   }
+
   return (
     <div className="deals-container">
       <h2>התאמות</h2>
@@ -65,6 +66,12 @@ const Exchange = () => {
             <div className="talent"><strong>כישרון משתמש 1:</strong> {deal.talent1Name}</div>
             <div className="talent"><strong>כישרון משתמש 2:</strong> {deal.talent2Name}</div>
             <div className="date"><strong>תאריך יצירת ההתאמה:</strong> {new Date(deal.dateCreated).toLocaleDateString()}</div>
+            <button
+              className="chat-button"
+              onClick={() => navigate(`/chat/${deal.id}`)}
+            >
+              מעבר לצ'אט
+            </button>
           </li>
         ))}
       </ul>

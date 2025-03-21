@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Paper, Grid, TextField, Box, MenuItem, Select, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
-import { fetchTalentsByParent, addTalentRequest } from '../api';
+import { fetchTalentsByParent, addTalentRequest } from '../apis/api';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/Talents.css';
 import HeaderFooter from './HeaderFooter';

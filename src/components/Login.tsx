@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { TextField, Button, Box, Typography, IconButton, InputAdornment, Alert } from '@mui/material';
 import { Visibility, VisibilityOff, Home } from '@mui/icons-material';
-import { loginUser } from '../api'; // פונקציה זו מבצעת את הבקשה לשרת
+import { loginUser } from '../apis/api'; // פונקציה זו מבצעת את הבקשה לשרת
 import '../styles/AuthForm.css';
 
 function Login() {

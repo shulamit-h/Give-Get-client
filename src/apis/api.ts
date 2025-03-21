@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE_URL = 'https://localhost:7160/api';
+import{API_BASE_URL} from './baseUrls';
 
 // פונקציה לביצוע בקשת POST לרישום משתמש חדש
 export const registerUser = async (userData: FormData) => {

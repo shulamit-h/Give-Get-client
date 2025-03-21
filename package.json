@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@microsoft/signalr": "^8.0.7",
     "@mui/icons-material": "^6.4.6",
     "@mui/material": "^6.4.6",
     "@testing-library/jest-dom": "^5.17.0",
@@ -15,6 +16,7 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "axios": "^1.8.1",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.2.0",

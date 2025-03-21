@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar, FormControl, InputLabel, Select, Checkbox, ListItemText, SelectChangeEvent } from '@mui/material';
 import { Visibility, VisibilityOff,Home } from '@mui/icons-material';
-import { registerUser, fetchTalentsByParent } from '../api';
+import { registerUser, fetchTalentsByParent } from '../apis/api';
 import { useNavigate,Link } from 'react-router-dom';
 import '../styles/AuthForm.css';
 import axios from 'axios';

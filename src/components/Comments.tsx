@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, TextField, Button, Paper, Avatar, Grid } from '@mui/material';
-import { fetchComments, addComment, getProfileImage, fetchUserById } from '../api';
+import { fetchComments, addComment, getProfileImage, fetchUserById } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Comments.css';
 import { Comment } from '../Types/Types';
