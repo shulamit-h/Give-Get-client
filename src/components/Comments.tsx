@@ -69,7 +69,7 @@ const Comments = () => {
       setComments(commentsWithUserDetails);
     } catch (error) {
       console.error('Error adding comment:', error);
-      setError('הוספת התגובה נכשלה.');
+      setError('כדי לשלוח תגובה יש להיות רשום ולבצע התחברות');
     }
   };
 
@@ -111,6 +111,9 @@ const Comments = () => {
           <Button variant="contained" color="primary" onClick={handleAddComment}>
             הוסף תגובה
           </Button>
+          <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
+            שים לב: הוספת תגובה אפשרית רק למשתמשים רשומים ומחוברים.
+          </Typography>
         </Paper>
       </Container>
     </HeaderFooter>
