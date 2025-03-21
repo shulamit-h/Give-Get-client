@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, IconButton, InputAdornment, Alert, Snackbar, FormControl, InputLabel, Select, Checkbox, ListItemText, SelectChangeEvent } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserData, updateUserData, fetchTalentsByParent, fetchTalentsByUserId } from '../api';
+import { fetchUserData, updateUserData, fetchTalentsByParent, fetchTalentsByUserId } from '../apis/api';
 import { Talent, TalentUser } from '../Types/Types';
 import '../styles/AuthForm.css';
 
