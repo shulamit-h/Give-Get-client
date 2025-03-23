@@ -4,6 +4,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserData, updateUserData, fetchTalentsByParent, fetchTalentsByUserId } from '../apis/api';
 import { Talent, TalentUser } from '../Types/Types';
+import { validateEmail, validatePhoneNumber, validateAge } from '../utils/validation';
 import '../styles/AuthForm.css';
 
 const UpdateProfile = () => {
@@ -208,11 +209,11 @@ const UpdateProfile = () => {
 
     const newFieldErrors = {
       username: !formData.username,
-      email: !formData.email,
+      email: !formData.email || !validateEmail(formData.email),
       password: !formData.password,
-      age: !formData.age,
+      age: !formData.age || !validateAge(formData.age),
       gender: !formData.gender,
-      phoneNumber: !formData.phoneNumber,
+      phoneNumber: !formData.phoneNumber || !validatePhoneNumber(formData.phoneNumber),
       desc: !formData.desc,
     };
 
@@ -386,7 +387,7 @@ const UpdateProfile = () => {
           value={formData.email}
           onChange={handleChange}
           error={fieldErrors.email}
-          helperText={fieldErrors.email && 'נא למלא כתובת אימייל'}
+          helperText={fieldErrors.email && 'נא למלא כתובת אימייל תקינה'}
           inputRef={emailRef}
         />
         <TextField
@@ -423,7 +424,7 @@ const UpdateProfile = () => {
           value={formData.age}
           onChange={handleChange}
           error={fieldErrors.age}
-          helperText={fieldErrors.age && 'נא למלא גיל'}
+          helperText={fieldErrors.age && 'נא למלא גיל תקין'}
           inputRef={ageRef}
         />
         <TextField

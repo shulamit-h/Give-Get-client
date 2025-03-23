@@ -6,6 +6,8 @@ import { useNavigate,Link } from 'react-router-dom';
 import '../styles/AuthForm.css';
 import axios from 'axios';
 import {Talent} from '../Types/Types';
+import { validateEmail, validatePhoneNumber, validateAge } from '../utils/validation';
+
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -95,11 +97,11 @@ const Register: React.FC = () => {
 
     const newFieldErrors = {
       username: !formData.username,
-      email: !formData.email,
+      email: !formData.email || !validateEmail(formData.email),
       password: !formData.password,
-      age: !formData.age,
+      age: !formData.age || !validateAge(formData.age),
       gender: !formData.gender,
-      phoneNumber: !formData.phoneNumber,
+      phoneNumber: !formData.phoneNumber || !validatePhoneNumber(formData.phoneNumber),
       desc: !formData.desc,
     };
 
@@ -205,7 +207,7 @@ const Register: React.FC = () => {
         value={formData.email}
         onChange={handleChange}
         error={fieldErrors.email}
-        helperText={fieldErrors.email && "נא למלא כתובת אימייל"}
+        helperText={fieldErrors.email && "נא למלא כתובת אימייל תקינה"}
       />
       <TextField
         margin="normal"
@@ -245,7 +247,7 @@ const Register: React.FC = () => {
         value={formData.age}
         onChange={handleChange}
         error={fieldErrors.age}
-        helperText={fieldErrors.age && "נא למלא גיל"}
+        helperText={fieldErrors.age && "נא למלא גיל תקין"}
       />
       <TextField
         margin="normal"
@@ -271,7 +273,7 @@ const Register: React.FC = () => {
         value={formData.phoneNumber}
         onChange={handleChange}
         error={fieldErrors.phoneNumber}
-        helperText={fieldErrors.phoneNumber && "נא למלא מספר טלפון"}
+        helperText={fieldErrors.phoneNumber && "נא למלא מספר טלפון תקין"}
       />
       <TextField
         margin="normal"

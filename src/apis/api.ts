@@ -362,3 +362,26 @@ export const fetchDealsByUser = async (userId: number) => {
   });
   return response.data;
 };
+
+export const updateUserScore = async (userId: number, action: number) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.put(`${API_BASE_URL}/user/update-score/${userId}`,
+      action, // הנתונים שנשלחים לשרת
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data; // מחזיר את הנתונים מהשרת
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to update user score');
+  }
+};
