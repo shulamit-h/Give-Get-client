@@ -12,7 +12,7 @@ import Talents from './components/Talents';
 import About from './components/About';
 import TalentRequests from './components/TalentRequests';
 import Exchange from './components/Exchange';
-import ChatsPage from './pages/ChatPage';
+import ChatPage from './pages/ChatPage';
 import ExchangePage from './pages/ExchangePage';
 
 const theme = createTheme({
@@ -55,9 +55,8 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/talent-requests" element={<TalentRequests />} />
           <Route path="/exchange" element={<Exchange />} />
-          <Route path="/chats" element={<ChatsPage />} />
-          <Route path="/chat/:exchangeId" element={<ExchangePage />} />
-        </Routes>
+          <Route path="/chat/:exchangeId" element={<ChatPage />} />
+          </Routes>
       </Router>
     </ThemeProvider>
   );

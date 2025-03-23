@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { startChatConnection, sendMessage, stopChatConnection } from '../services/chatService';
+import { startChatConnection, stopChatConnection, sendMessage } from '../services/chatService';
 import { getChatHistory } from '../apis/chatApi';
 import { Message } from '../Types/message';
 
@@ -12,45 +12,52 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, exchangeId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
 
-  // התחברות ל-SignalR וטעינת היסטוריה
   useEffect(() => {
     const initChat = async () => {
-      const history = await getChatHistory(exchangeId);
-      setMessages(history);
+      try {
+        const history = await getChatHistory(exchangeId);
+        setMessages(history);
 
-      await startChatConnection(userId, exchangeId, (msg) => {
-        setMessages(prev => [...prev, msg]);
-      });
+        await startChatConnection(userId, exchangeId, (msg) => {
+          setMessages((prev) => [...prev, msg]);
+        });
+      } catch (error) {
+        console.error('Error initializing chat:', error);
+      }
     };
 
     initChat();
 
-    return () => { stopChatConnection(); };
+    return () => {
+      stopChatConnection();
+    };
   }, [userId, exchangeId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
+    console.log('Sending message:', input);
     await sendMessage(exchangeId, userId, input);
     setInput('');
   };
 
   return (
-    <div className="border p-4 rounded w-full h-96 flex flex-col">
-      <div className="flex-1 overflow-y-auto mb-2">
+    <div className="chat-box">
+      <div className="messages">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`p-2 ${msg.fromUserId === userId ? 'text-right bg-blue-100' : 'bg-gray-100'}`}>
-            <span>{msg.text}</span>
+          <div key={idx} className={msg.fromUserId === userId ? 'message sent' : 'message received'}>
+            <p>{msg.text}</p>
+            <small>{new Date(msg.timestamp).toLocaleTimeString()}</small>
           </div>
         ))}
       </div>
-      <div className="flex">
+      <div className="input-area">
         <input
-          className="border flex-1 p-2 rounded"
+          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="כתוב הודעה..."
         />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded ml-2" onClick={handleSend}>שלח</button>
+        <button onClick={handleSend}>שלח</button>
       </div>
     </div>
   );
