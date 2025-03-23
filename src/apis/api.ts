@@ -385,3 +385,26 @@ export const updateUserScore = async (userId: number, action: number) => {
     throw new Error(error.response?.data?.message || 'Failed to update user score');
   }
 };
+
+export const updateDealStatus = async (exchangeId: number, status: number) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.put(`${API_BASE_URL}/Exchange/update-status`, null, {
+      params: {
+        exchangeId,
+        status,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
