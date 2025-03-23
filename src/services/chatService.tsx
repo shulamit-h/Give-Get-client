@@ -67,10 +67,14 @@ export const startChatConnection = async (
 
         console.log(11, 'Attempting to connect...');
         await connection.start();
-        console.log(22, 'connection.start() done!');
+        console.log(22, 'connection state:', connection.state);
+        try {
+            await connection.invoke('Join',Number(userId), Number(exchangeId));
+            console.log(33, 'Joined chat');
+        } catch (err: unknown) {
+            console.error('Failed to join chat:', err);            
+        }
         
-        await connection.invoke('Join', userId, exchangeId);
-        console.log(33, 'Joined chat');
     } catch (err: unknown) {
         console.error('Failed to connect to SignalR:', err);
 
