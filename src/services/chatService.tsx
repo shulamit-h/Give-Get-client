@@ -4,13 +4,33 @@ import { HUB_URL } from '../apis/baseUrls';
 
 let connection: signalR.HubConnection | null = null;
 
+// ממתין לחיבור יציב לפני Invoke
+const waitForConnection = async (timeout = 5000) => {
+    const start = Date.now();
+    while (connection && connection.state !== signalR.HubConnectionState.Connected) {
+        if (Date.now() - start > timeout) {
+            throw new Error('Timeout waiting for SignalR connection');
+        }
+        await new Promise((res) => setTimeout(res, 100)); // sleep 100ms
+    }
+};
+
+// קריאה בטוחה ל-invoke עם המתנה לחיבור
+const safeInvoke = async (methodName: string, ...args: any[]) => {
+    args.map((arg) => console.log(typeof(arg)));
+    if (!connection) throw new Error('SignalR connection is not initialized');
+    await waitForConnection();
+    console.log('Invoking:', methodName, args);
+    
+    return connection.invoke(methodName, ...args);
+};
+
 // יצירת חיבור ל-SignalR
 export const startChatConnection = async (
     userId: number,
     exchangeId: number,
     onReceive: (msg: Message) => void
 ) => {
-
     console.log(1, '\nStarting SignalR connection...');
 
     const token = localStorage.getItem('authToken');
@@ -19,10 +39,8 @@ export const startChatConnection = async (
         alert('No authentication token found.');
         return;
     }
-    console.log(2, '\ntoken:', token);
 
-
-    const connectionUrl = `${HUB_URL}`;  // הוספת ה-token ל-URL
+    const connectionUrl = `${HUB_URL}`;
     console.log(2.5, 'connectionUrl:', connectionUrl);
 
     connection = new signalR.HubConnectionBuilder()
@@ -34,76 +52,48 @@ export const startChatConnection = async (
         .withAutomaticReconnect()
         .build();
 
-
-    console.log(3, '\nconnection:', connection);
-
-
     connection.on('ReceiveMessage', (fromUserId: number, text: string, timestamp: string) => {
         onReceive({ fromUserId, text, timestamp });
     });
-
-    console.log(4, '\nconnection.on(\'ReceiveMessage');
 
     connection.onclose((error) => {
         console.error('SignalR connection closed:', error);
     });
 
-    console.log(5, '\nconnection.onclose');
-
-
-    connection.onreconnected(() => {
+    connection.onreconnected(async () => {
         console.log('Reconnected to SignalR. Rejoining the chat...');
-        if (connection?.state === signalR.HubConnectionState.Connected) {
-            connection.invoke('Join', userId, exchangeId).catch(err =>
-                console.error('Failed to re-Join after reconnect:', err)
-            );
+        try {
+            await safeInvoke('Join', userId, exchangeId);
+            console.log('Rejoined chat successfully');
+        } catch (err) {
+            console.error('Failed to re-Join after reconnect:', err);
         }
     });
 
-    console.log(6, '\nconnection.onreconnected');
-
     try {
-        console.log('start real connection');
-
         console.log(11, 'Attempting to connect...');
         await connection.start();
-        console.log(22, 'connection state:', connection.state);
-        try {
-            await connection.invoke('Join',Number(userId), Number(exchangeId));
-            console.log(33, 'Joined chat');
-        } catch (err: unknown) {
-            console.error('Failed to join chat:', err);            
-        }
+        console.log(22, 'Connected. State:', connection.state);
+        console.log('userid', userId);
+        console.log('exchangeId', exchangeId);
         
-    } catch (err: unknown) {
-        console.error('Failed to connect to SignalR:', err);
+        await safeInvoke('Join', parseInt(userId.toString()), parseInt(exchangeId.toString()));
+        console.log(33, 'Joined chat');
 
-        if (err instanceof Error) {
-            // אם 'err' הוא instance של Error, גישה ל-message בטוחה
-            console.error('Error details:', err.message);
-            alert(`Failed to connect to the chat server. Please check your connection.\nError: ${err.message}`);
-        } else {
-            // אם 'err' לא אובייקט מסוג Error
-            alert(`Failed to connect to the chat server. Please check your connection.\nError: ${String(err)}`);
-        }
+    } catch (err: unknown) {
+        console.error('Failed :', err);
+        //alert(`Failed to connect to the chat server. Please check your connection.\nError: ${err instanceof Error ? err.message : String(err)}`);
     }
 };
 
-
-
-
-
 // שליחת הודעה
 export const sendMessage = async (exchangeId: number, userId: number, text: string) => {
-    console.log('Sending message to server:', { exchangeId, userId, text });
-    if (connection && connection.state === signalR.HubConnectionState.Connected) {
-        try {
-            await connection.invoke('SendMessage', exchangeId, userId, text);
-        } catch (err) {
-            console.error('Failed to send message:', err);
-        }
-    } else {
-        console.warn('Cannot send message. Connection is not active.');
+    console.log('Sending message:', { exchangeId, userId, text });
+    try {
+        await safeInvoke('SendMessage', parseInt(exchangeId.toString()), parseInt(userId.toString()), text);
+        console.log('Message sent successfully');
+    } catch (err) {
+        console.error('Failed to send message:', err);
     }
 };
 

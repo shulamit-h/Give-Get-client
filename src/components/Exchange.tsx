@@ -138,8 +138,8 @@ const Exchange = () => {
             </div>
             <button
               className="chat-button"
-              onClick={() => navigate(`/chat/${deal.id}`)}
-            >
+              onClick={() => navigate(`/chat/${deal.id}?userId=${userId}`)}
+              >
               מעבר לצ'אט
             </button>
           </li>
