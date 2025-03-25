@@ -386,7 +386,7 @@ export const updateUserScore = async (userId: number, action: number) => {
   }
 };
 
-export const updateDealStatus = async (exchangeId: number, status: number) => {
+export const updateDealStatus = async (exchangeId: number, status: number, userId: number) => {
   const token = localStorage.getItem('authToken');
   if (!token) {
     throw new Error('No token found');
@@ -397,6 +397,7 @@ export const updateDealStatus = async (exchangeId: number, status: number) => {
       params: {
         exchangeId,
         status,
+        userId
       },
       headers: {
         Authorization: `Bearer ${token}`,

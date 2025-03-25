@@ -3,13 +3,13 @@ import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchDealsByUser, fetchUserById, fetchTalentById, updateUserScore, updateDealStatus } from '../apis/api';
 import '../styles/Exchange.css';
-import { Tabs, Tab, Box, Button } from '@mui/material'; // ייבוא נוסף לכרטיסיות ולכפתורים
+import { Tabs, Tab, Box, Button } from '@mui/material';
 
 const Exchange = () => {
   const [deals, setDeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [likedDeals, setLikedDeals] = useState<{ [key: string]: 'like' | 'dislike' | null }>({});
-  const [tabIndex, setTabIndex] = useState(0); // ניהול הכרטיסיות
+  const [tabIndex, setTabIndex] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = new URLSearchParams(location.search).get('userId');
@@ -22,7 +22,6 @@ const Exchange = () => {
           const dealsData = await fetchDealsByUser(Number(userId));
           console.log('Deals data:', dealsData);
 
-          // שליפת שמות המשתמשים ושמות הכישרונות
           const updatedDeals = await Promise.all(
             dealsData.map(async (deal: any) => {
               const user1 = await fetchUserById(deal.user1Id);
@@ -36,14 +35,15 @@ const Exchange = () => {
                 user2Name: user2 ? user2.userName : 'משתמש לא נמצא',
                 talent1Name: talent1 ? talent1.talentName : 'כישרון לא נמצא',
                 talent2Name: talent2 ? talent2.talentName : 'כישרון לא נמצא',
-                status: deal.status.toString() // המרת הסטטוס למחרוזת
+                status: deal.status.toString(),
+                user1Confirmed: deal.user1Confirmed,
+                user2Confirmed: deal.user2Confirmed
               };
             })
           );
 
           setDeals(updatedDeals);
 
-          // שליפת מצבי הלייק/דיסלייק מ-Local Storage תוך שימוש במזהה משתמש
           const storedLikes = JSON.parse(localStorage.getItem(`likedDeals_${userId}`) || '{}');
           console.log('Stored likes:', storedLikes);
           setLikedDeals(storedLikes);
@@ -65,36 +65,31 @@ const Exchange = () => {
 
   const handleLikeDislike = async (dealId: number, action: number, deal: any) => {
     try {
-      // זיהוי המשתמש השני בעסקה
       const targetUserId = deal.user1Id === Number(userId) ? deal.user2Id : deal.user1Id;
-
-      // עדכון הניקוד בשרת
       await updateUserScore(targetUserId, action);
       console.log(`Updated score for user ID: ${targetUserId} with action: ${action}`);
 
-      // יצירת מפתח ייחודי לכל עסקה ולכל משתמש
       const dealKey = `${userId}_${dealId}`;
 
-      // עדכון מצב הלייק/דיסלייק ב-UI וב-Local Storage תוך שימוש במזהה משתמש
       setLikedDeals((prev) => {
         const current = prev[dealKey];
         const newLikedDeals = { ...prev };
 
         switch (action) {
-          case 3: // ביטול לייק
+          case 3:
             if (current === 'like') {
               newLikedDeals[dealKey] = null;
             }
             break;
-          case 2: // ביטול דיסלייק
+          case 2:
             if (current === 'dislike') {
               newLikedDeals[dealKey] = null;
             }
             break;
-          case 1: // לייק
+          case 1:
             newLikedDeals[dealKey] = 'like';
             break;
-          case 0: // דיסלייק
+          case 0:
             newLikedDeals[dealKey] = 'dislike';
             break;
           default:
@@ -113,19 +108,40 @@ const Exchange = () => {
 
   const handleApproveDeal = async (deal: any) => {
     try {
-      let newStatus: string = '1'; // בהמתנה
+      let newStatus = deal.status;
+      let userConfirmedField = '';
 
-      if (deal.status === '0' && deal.user1Id === Number(userId)) {
-        newStatus = '1'; // משתמש 1 אישר, מעביר לסטטוס בהמתנה
-      } else if (deal.status === '1' && deal.user2Id === Number(userId)) {
-        newStatus = '2'; // משתמש 2 אישר, מעביר לסטטוס באמצע
-      } else if (deal.status === '2' && (deal.user1Id === Number(userId) || deal.user2Id === Number(userId))) {
-        newStatus = '3'; // שניהם אישרו סיום, מעביר לסטטוס הסתיימה
+      if (deal.status === '0') {
+        newStatus = '1';
+        userConfirmedField = deal.user1Id === Number(userId) ? 'user1Confirmed' : 'user2Confirmed';
+      } else if (deal.status === '1') {
+        userConfirmedField = deal.user1Id === Number(userId) ? 'user1Confirmed' : 'user2Confirmed';
+        if (deal.user1Confirmed && deal.user2Confirmed) {
+          newStatus = '2';
+        }
+      } else if (deal.status === '2') {
+        userConfirmedField = deal.user1Id === Number(userId) ? 'user1Confirmed' : 'user2Confirmed';
+        if (deal.user1Confirmed && deal.user2Confirmed) {
+          newStatus = '3';
+        }
       }
 
-      await updateDealStatus(deal.id, Number(newStatus));
+      console.log(`Updating deal status: dealId=${deal.id}, newStatus=${newStatus}, userConfirmedField=${userConfirmedField}`);
+      const updatedDeal = await updateDealStatus(deal.id, Number(newStatus), Number(userId));
+      console.log('Updated deal from server:', updatedDeal);
+
       setDeals((prevDeals) =>
-        prevDeals.map((d) => (d.id === deal.id ? { ...d, status: newStatus } : d))
+        prevDeals.map((d) => {
+          if (d.id === deal.id) {
+            return {
+              ...d,
+              status: updatedDeal.status.toString(),
+              user1Confirmed: updatedDeal.user1Confirmed,
+              user2Confirmed: updatedDeal.user2Confirmed,
+            };
+          }
+          return d;
+        })
       );
     } catch (error) {
       console.error('Error updating deal status:', error);
@@ -133,7 +149,19 @@ const Exchange = () => {
   };
 
   const renderDeals = (status: string) => {
-    const filteredDeals = deals.filter(deal => deal.status === status);
+    const filteredDeals = deals.filter(deal => {
+      if (status === '0') {
+        return deal.status === '0' || (deal.status === '1' && ((deal.user1Id === Number(userId) && !deal.user1Confirmed) || (deal.user2Id === Number(userId) && !deal.user2Confirmed)));
+      } else if (status === '1') {
+        return deal.status === '1' && ((deal.user1Id === Number(userId) && deal.user1Confirmed) || (deal.user2Id === Number(userId) && deal.user2Confirmed));
+      } else if (status === '2') {
+        return deal.status === '2';
+      } else if (status === '3') {
+        return deal.status === '3';
+      }
+      return false;
+    });
+
     console.log(`Filtered deals for status ${status}:`, filteredDeals);
     if (filteredDeals.length === 0) {
       return <div className="no-deals-message">לא נמצאו עסקאות בקטגוריה זו.</div>;
@@ -155,15 +183,40 @@ const Exchange = () => {
                   אשר עסקה
                 </Button>
               )}
-              {status === '1' && deal.user2Id === Number(userId) && (
+              {status === '1' && deal.user1Id === Number(userId) && !deal.user1Confirmed && (
                 <Button variant="contained" color="primary" onClick={() => handleApproveDeal(deal)}>
                   אשר עסקה
                 </Button>
               )}
-              {status === '2' && (
+              {status === '1' && deal.user2Id === Number(userId) && !deal.user2Confirmed && (
+                <Button variant="contained" color="primary" onClick={() => handleApproveDeal(deal)}>
+                  אשר עסקה
+                </Button>
+              )}
+              {status === '2' && deal.user1Id === Number(userId) && !deal.user1Confirmed && (
                 <Button variant="contained" color="primary" onClick={() => handleApproveDeal(deal)}>
                   סיים עסקה
                 </Button>
+              )}
+              {status === '2' && deal.user2Id === Number(userId) && !deal.user2Confirmed && (
+                <Button variant="contained" color="primary" onClick={() => handleApproveDeal(deal)}>
+                  סיים עסקה
+                </Button>
+              )}
+              {status === '2' && deal.user1Id === Number(userId) && deal.user2Confirmed && !deal.user1Confirmed && (
+                <div className="notification confirmed">
+                  המשתמש השני כבר אישר סיום עסקה
+                </div>
+              )}
+              {status === '2' && deal.user2Id === Number(userId) && deal.user1Confirmed && !deal.user2Confirmed && (
+                <div className="notification confirmed">
+                  המשתמש השני כבר אישר סיום עסקה
+                </div>
+              )}
+              {status === '2' && ((deal.user1Id === Number(userId) && deal.user1Confirmed) || (deal.user2Id === Number(userId) && deal.user2Confirmed)) && (
+                <div className="notification self-confirmed">
+                  אישרת סיום עסקה
+                </div>
               )}
               <button
                 className={`like-button ${likedDeals[`${userId}_${deal.id}`] === 'like' ? 'active' : ''}`}
@@ -185,7 +238,7 @@ const Exchange = () => {
             <button
               className="chat-button"
               onClick={() => navigate(`/chat/${deal.id}?userId=${userId}`)}
-              >
+            >
               מעבר לצ'אט
             </button>
           </li>

@@ -1,20 +1,19 @@
-import { useParams, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import ChatBox from '../components/ChatBox';
 
 const ChatPage = () => {
   const { exchangeId } = useParams<{ exchangeId: string }>();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const userId = queryParams.get('userId');  // שליפת ה-userId מה-URL
+  const userId = Number(localStorage.getItem('authToken'));
 
-  if (!exchangeId || !userId) {
-    return <div>Exchange ID or User ID is missing</div>;
+  if (!exchangeId) {
+    return <div>Exchange ID is missing</div>;
   }
 
   return (
     <div className="chat-page">
       <h2>צ'אט העסקה</h2>
-      <ChatBox userId={Number(userId)} exchangeId={Number(exchangeId)} />
+      <ChatBox userId={userId} exchangeId={Number(exchangeId)} />
     </div>
   );
 };
