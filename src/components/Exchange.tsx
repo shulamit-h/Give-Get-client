@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchDealsByUser, fetchUserById, fetchTalentById, updateUserScore, updateDealStatus } from '../apis/api';
+import { fetchDealsByUser, getNotSecret , fetchTalentById, updateUserScore, updateDealStatus } from '../apis/api';
 import '../styles/Exchange.css';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 
@@ -24,8 +24,8 @@ const Exchange = () => {
 
           const updatedDeals = await Promise.all(
             dealsData.map(async (deal: any) => {
-              const user1 = await fetchUserById(deal.user1Id);
-              const user2 = await fetchUserById(deal.user2Id);
+              const user1 = await getNotSecret(deal.user1Id);
+              const user2 = await getNotSecret(deal.user2Id);
               const talent1 = await fetchTalentById(deal.talent1Offered);
               const talent2 = await fetchTalentById(deal.talent2Offered);
 
