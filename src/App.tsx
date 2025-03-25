@@ -13,7 +13,7 @@ import About from './components/About';
 import TalentRequests from './components/TalentRequests';
 import Exchange from './components/Exchange';
 import ChatPage from './pages/ChatPage';
-import ExchangePage from './pages/ExchangePage';
+// import ExchangePage from './pages/ExchangePage';
 
 const theme = createTheme({
   palette: {
