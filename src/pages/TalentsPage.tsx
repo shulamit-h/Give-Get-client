@@ -4,7 +4,7 @@ import { addTalentRequest } from '../apis/talentRequestApi';
 import { fetchTalentsByParent } from '../apis/talentApi';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/Talents.css';
-import HeaderFooter from './HeaderFooter';
+import HeaderFooter from '../components/common/HeaderFooter';
 
 interface Talent {
   id: number;

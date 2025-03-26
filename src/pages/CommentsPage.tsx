@@ -5,7 +5,7 @@ import {getProfileImage , fetchUserById} from '../apis/userApi';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Comments.css';
 import { Comment } from '../Types/Types';
-import HeaderFooter from './HeaderFooter';
+import HeaderFooter from '../components/common/HeaderFooter';
 
 const Comments = () => {
   const [comments, setComments] = useState<Comment[]>([]);

@@ -1,17 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/Home';
-import Register from './components/Register';
-import Login from './components/Login';
+import HomePage from './pages/HomePage';
+import Register from './pages/RegisterPage';
+import Login from './pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Profile from './components/Profile'; // הנתיב שלך לדף פרופיל
-import UpdateProfile from './components/UpdateProfile';
-import Comments from './components/Comments';
-import Talents from './components/Talents';
-import About from './components/About';
-import TalentRequests from './components/TalentRequests';
-import Exchange from './components/Exchange';
+import Profile from './pages/ProfilePage'; // הנתיב שלך לדף פרופיל
+import UpdateProfile from './components/specific/UpdateProfile';
+import Comments from './pages/CommentsPage';
+import Talents from './pages/TalentsPage';
+import About from './pages/AboutPage';
+import TalentRequests from './components/specific/TalentRequests';
+import Exchange from './components/specific/Exchange';
 import ChatPage from './pages/ChatPage';
 // import ExchangePage from './pages/ExchangePage';
 

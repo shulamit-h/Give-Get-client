@@ -1,5 +1,5 @@
 import { useParams, useLocation } from 'react-router-dom';
-import ChatBox from '../components/ChatBox';
+import ChatBox from '../components/specific/ChatBox';
 
 const ChatPage = () => {
   const { exchangeId } = useParams<{ exchangeId: string }>();

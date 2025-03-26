@@ -3,9 +3,15 @@ import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Avatar
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { jwtDecode } from 'jwt-decode';
+<<<<<<< HEAD:src/components/HeaderFooter.tsx
 import '../styles/HeaderFooter.css';
 import { getProfileImage } from '../apis/userApi'; // Ensure getProfileImage is imported
 import Logo from '../images/logo.png'
+=======
+import '../../styles/HeaderFooter.css';
+import { getProfileImage } from '../../apis/api'; // Ensure getProfileImage is imported
+import Logo from '../../assets/images/logo.png';
+>>>>>>> 301da4cd0dbf41879e2a8495f1aa860767c99be3:src/components/common/HeaderFooter.tsx
 interface HeaderFooterProps {
   children: React.ReactNode;
 }

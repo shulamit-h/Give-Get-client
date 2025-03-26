@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTalentRequests, deleteTalentRequest, updateTalentRequest } from '../apis/talentRequestApi';
-import { fetchTalentById } from '../apis/talentApi';
-import { fetchUserById } from '../apis/userApi';
+import { fetchTalentRequests, deleteTalentRequest, updateTalentRequest, fetchUserById, fetchTalentById } from '../apis/api';
 import { Container, Typography, Paper, Button, TextField, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { TalentRequest } from '../Types/Types';
+import { TalentRequest } from '../../Types/Types';
 import '../styles/TalentRequests.css';
 
 const TalentRequests: React.FC = () => {

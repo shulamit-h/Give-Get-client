@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Typography, Paper, Grid } from '@mui/material';
 import '../styles/About.css';
-import HeaderFooter from './HeaderFooter';
+import HeaderFooter from '../components/common/HeaderFooter';
 
 const About = () => {
   return (

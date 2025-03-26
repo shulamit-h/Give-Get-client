@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+<<<<<<< HEAD:src/components/Exchange.tsx
 import { fetchDealsByUser, updateDealStatus } from '../apis/exchangeApi';
 import { getNotSecret , updateUserScore } from '../apis/userApi';
 import {fetchTalentById} from '../apis/talentApi';
-import '../styles/Exchange.css';
+import '../../styles/Exchange.css';
+=======
+import { fetchDealsByUser, getNotSecret , fetchTalentById, updateUserScore, updateDealStatus } from '../../apis/api';
+import '../../styles/Exchange.css';
+>>>>>>> 301da4cd0dbf41879e2a8495f1aa860767c99be3:src/components/specific/Exchange.tsx
 import { Tabs, Tab, Box, Button } from '@mui/material';
 
 const Exchange = () => {
