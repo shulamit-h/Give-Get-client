@@ -71,3 +71,7 @@ export type UserType = {
   profileImage: string;
   isAdmin: boolean | null;
 };
+
+export type ProfileDetailsProps = {
+  user: UserType;
+}

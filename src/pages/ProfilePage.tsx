@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Route, Routes } from 'react-router-dom';
 import { fetchTalentsByUserId, } from '../apis/talentUserApi';
-import { fetchTalentById } from '../apis/talentApi'; 
-import { fetchUserData} from '../apis/userApi'; 
+import { fetchTalentById } from '../apis/talentApi';
+import { fetchUserData } from '../apis/userApi';
 import '../styles/Profile.css'; // הוסף את קובץ ה-CSS שלך
 import HomeIcon from '@mui/icons-material/Home'; // ייבוא של אייקון הבית
 import { IconButton, Avatar, Typography, Button } from '@mui/material';
-import UpdateProfile from '../components/specific/UpdateProfile'; 
+import UpdateProfile from '../components/specific/UpdateProfile';
 import Exchange from '../components/specific/Exchange';
 import TalentRequests from '../components/specific/TalentRequests'; // ייבוא הקומפוננטה החדשה
+import ProfileDetails from '../components/specific/ProfileDetails'; // ייבוא הקומפוננטה החדשה
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -112,19 +113,7 @@ const Profile = () => {
           )}
 
           <Routes>
-            <Route path="/" element={
-              <div className="profile-details">
-                <p><strong>שם משתמש:</strong> {user.userName}</p>
-                <p><strong>אימייל:</strong> {user.email}</p>
-                <p><strong>מספר טלפון:</strong> {user.phoneNumber}</p>
-                <p><strong>תפקיד:</strong> {user.isAdmin ? 'מנהל' : 'משתמש'}</p>
-                <p><strong>גיל:</strong> {user.age}</p>
-                <p><strong>מין:</strong> {user.gender === 'Male' ? 'זכר' : 'נקבה'}</p>
-                <p><strong>ציון:</strong> {user.score}</p>
-                <p><strong>פעיל:</strong> {user.isActive ? 'כן' : 'לא'}</p>
-                <p><strong>תאור:</strong> {user.desc}</p>
-              </div>
-            } />
+            <Route path="/" element={<ProfileDetails user={user} />} />
             <Route path="talents" element={
               <div className="profile-talents">
                 <h2>הכשרונות שלי</h2>
