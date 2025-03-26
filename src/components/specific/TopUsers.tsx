@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTopUsers,getProfileImage} from '../../apis/userApi';
-import '../styles/TopUsers.css';
+import '../../styles/TopUsers.css';
 import { TopUser } from '../../Types/TopUser';
 
 const TopUsers: React.FC = () => {

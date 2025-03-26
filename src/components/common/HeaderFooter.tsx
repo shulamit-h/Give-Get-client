@@ -4,7 +4,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { jwtDecode } from 'jwt-decode';
 import '../../styles/HeaderFooter.css';
-import { getProfileImage } from '../../apis/userApi'; // Ensure getProfileImage is imported
+import { getProfileImage } from '../../apis/userApi';
 import Logo from '../../assets/images/logo.png';
 
 

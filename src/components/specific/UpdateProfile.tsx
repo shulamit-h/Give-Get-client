@@ -7,7 +7,7 @@ import {fetchTalentsByParent} from '../../apis/talentApi';
 import {fetchTalentsByUserId} from '../../apis/talentUserApi';
 import { Talent, TalentUser } from '../../Types/Types';
 import { validateEmail, validatePhoneNumber, validateAge } from '../../utils/validation';
-import '../styles/AuthForm.css';
+import '../../styles/AuthForm.css';
 
 const UpdateProfile = () => {
   const [formData, setFormData] = useState({
