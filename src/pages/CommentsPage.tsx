@@ -4,11 +4,11 @@ import { fetchComments, addComment} from '../apis/commentApi';
 import {getProfileImage , fetchUserById} from '../apis/userApi';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Comments.css';
-import { Comment } from '../Types/Types';
+import { CommentType } from '../Types/123types';
 import HeaderFooter from '../components/common/HeaderFooter';
 
 const Comments = () => {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Comments = () => {
 
         // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
         const commentsWithUserDetails = await Promise.all(
-          response.map(async (comment: Comment) => {
+          response.map(async (comment: CommentType) => {
             if (comment.userId !== 0) {
               // const user = await fetchUserById(comment.userId);
               const profileImage = await getProfileImage(comment.userId);
@@ -55,7 +55,7 @@ const Comments = () => {
 
       // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
       const commentsWithUserDetails = await Promise.all(
-        response.map(async (comment: Comment) => {
+        response.map(async (comment: CommentType) => {
           if (comment.userId !== 0) {
             // const user = await fetchUserById(comment.userId);
             const profileImage = await getProfileImage(comment.userId);

@@ -6,7 +6,7 @@ import { registerUser} from '../apis/userApi';
 import { useNavigate,Link } from 'react-router-dom';
 import '../styles/AuthForm.css';
 import axios from 'axios';
-import {Talent} from '../Types/Types';
+import {TalentType} from '../Types/123types';
 import { validateEmail, validatePhoneNumber, validateAge } from '../utils/validation';
 
 
@@ -36,8 +36,8 @@ const Register: React.FC = () => {
     phoneNumber: false,
     desc: false,
   });
-  const [talents, setTalents] = useState<Talent[]>([]);
-  const [subTalents, setSubTalents] = useState<{ [key: number]: Talent[] }>({});
+  const [talents, setTalents] = useState<TalentType[]>([]);
+  const [subTalents, setSubTalents] = useState<{ [key: number]: TalentType[] }>({});
   const navigate = useNavigate();
 
   useEffect(() => {

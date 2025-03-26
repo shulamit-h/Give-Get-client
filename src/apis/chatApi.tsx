@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { Message } from '../Types/message';
+import { MessageType } from '../Types/123types';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
 
-export const getChatHistory = async (exchangeId: number): Promise<Message[]> => {
+export const getChatHistory = async (exchangeId: number): Promise<MessageType[]> => {
   const token = localStorage.getItem('authToken');
 
   if (!token) {

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {fetchUserData, updateUserData} from '../../apis/userApi';
 import {fetchTalentsByParent} from '../../apis/talentApi';
 import {fetchTalentsByUserId} from '../../apis/talentUserApi';
-import { Talent, TalentUser } from '../../Types/Types';
+import { TalentType, TalentUserType } from '../../Types/123types';
 import { validateEmail, validatePhoneNumber, validateAge } from '../../utils/validation';
 import '../../styles/AuthForm.css';
 
@@ -36,11 +36,11 @@ const UpdateProfile = () => {
     desc: false,
   });
   const [userId, setUserId] = useState<number | null>(null);
-  const [talents, setTalents] = useState<Talent[]>([]);
-  const [subTalents, setSubTalents] = useState<{ [key: number]: Talent[] }>({});
+  const [talents, setTalents] = useState<TalentType[]>([]);
+  const [subTalents, setSubTalents] = useState<{ [key: number]: TalentType[] }>({});
   const [existingOfferedTalents, setExistingOfferedTalents] = useState<number[]>([]);
   const [existingWantedTalents, setExistingWantedTalents] = useState<number[]>([]);
-  const [talentsData, setTalentsData] = useState<TalentUser[]>([]);
+  const [talentsData, setTalentsData] = useState<TalentUserType[]>([]);
 
   const navigate = useNavigate();
 
@@ -51,8 +51,8 @@ const UpdateProfile = () => {
         setUserId(userData.id);
 
         const talentsData = await fetchTalentsByUserId(userData.id);
-        const offeredTalents = talentsData.filter((talent: TalentUser) => talent.isOffered).map((talent: TalentUser) => talent.talentId);
-        const wantedTalents = talentsData.filter((talent: TalentUser) => !talent.isOffered).map((talent: TalentUser) => talent.talentId);
+        const offeredTalents = talentsData.filter((talent: TalentUserType) => talent.isOffered).map((talent: TalentUserType) => talent.talentId);
+        const wantedTalents = talentsData.filter((talent: TalentUserType) => !talent.isOffered).map((talent: TalentUserType) => talent.talentId);
 
         // Fetch all talents and sub-talents
         const allTalents = await fetchAllTalentsWithSubTalents();
@@ -63,10 +63,10 @@ const UpdateProfile = () => {
 
         Object.keys(allTalents).forEach((parentId: string) => {
           const parentIntId = parseInt(parentId, 10);
-          if (allTalents[parentIntId]?.some((subTalent: Talent) => offeredTalents.includes(subTalent.id))) {
+          if (allTalents[parentIntId]?.some((subTalent: TalentType) => offeredTalents.includes(subTalent.id))) {
             parentOfferedTalents.add(parentIntId);
           }
-          if (allTalents[parentIntId]?.some((subTalent: Talent) => wantedTalents.includes(subTalent.id))) {
+          if (allTalents[parentIntId]?.some((subTalent: TalentType) => wantedTalents.includes(subTalent.id))) {
             parentWantedTalents.add(parentIntId);
           }
         });
@@ -96,8 +96,8 @@ const UpdateProfile = () => {
       try {
         const response = await fetchTalentsByParent(0);
         setTalents(response);
-        const allTalents: { [key: number]: Talent[] } = {};
-        await Promise.all(response.map(async (talent: Talent) => {
+        const allTalents: { [key: number]: TalentType[] } = {};
+        await Promise.all(response.map(async (talent: TalentType) => {
           const subTalentsResponse = await fetchTalentsByParent(talent.id);
           allTalents[talent.id] = subTalentsResponse;
           setSubTalents(prevSubTalents => ({

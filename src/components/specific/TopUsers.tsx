@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTopUsers,getProfileImage} from '../../apis/userApi';
 import '../../styles/TopUsers.css';
-import { TopUser } from '../../Types/TopUser';
+import { TopUserType } from '../../Types/123types';
 
 const TopUsers: React.FC = () => {
-  const [topUsers, setTopUsers] = useState<(TopUser & { profileImage: string })[]>([]); // הוספת profileImage דינמית
+  const [topUsers, setTopUsers] = useState<(TopUserType & { profileImage: string })[]>([]); // הוספת profileImage דינמית
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const TopUsers: React.FC = () => {
     
         // שליפת תמונת הפרופיל עבור כל משתמש
         const usersWithImages = await Promise.all(
-          users.map(async (user: TopUser) => {
+          users.map(async (user: TopUserType) => {
             // שליפת המזהה מתוך ה-URL של תמונת הפרופיל
             const userId = user.profileImageUrl.split('/').pop(); // חיתוך ה-URL והפקת המזהה
             let profileImage = '';

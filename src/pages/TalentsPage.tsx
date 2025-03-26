@@ -5,20 +5,16 @@ import { fetchTalentsByParent } from '../apis/talentApi';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/Talents.css';
 import HeaderFooter from '../components/common/HeaderFooter';
+import { TalentType } from '../Types/123types';
 
-interface Talent {
-  id: number;
-  talentName: string;
-  parentCategory: number;
-  subTalents?: Talent[];
-}
+
 
 const Talents = () => {
-  const [talents, setTalents] = useState<Talent[]>([]);
+  const [talents, setTalents] = useState<TalentType[]>([]);
   const [newTalentName, setNewTalentName] = useState('');
   const [parentTalentId, setParentTalentId] = useState<number | string>('');
   const [error, setError] = useState<string | null>(null);
-  const [parentTalents, setParentTalents] = useState<Talent[]>([]);
+  const [parentTalents, setParentTalents] = useState<TalentType[]>([]);
   const [token, setToken] = useState<string | null>(null);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
@@ -27,7 +23,7 @@ const Talents = () => {
       try {
         const response = await fetchTalentsByParent(0);
         const talentsWithSubTalents = await Promise.all(
-          response.map(async (talent: Talent) => {
+          response.map(async (talent: TalentType) => {
             const subTalents = await fetchTalentsByParent(talent.id);
             return { ...talent, subTalents };
           })
@@ -73,7 +69,7 @@ const Talents = () => {
       // עדכון רשימת הכשרונות
       const response = await fetchTalentsByParent(0);
       const talentsWithSubTalents = await Promise.all(
-        response.map(async (talent: Talent) => {
+        response.map(async (talent: TalentType) => {
           const subTalents = await fetchTalentsByParent(talent.id);
           return { ...talent, subTalents };
         })

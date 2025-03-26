@@ -1,5 +1,5 @@
 import * as signalR from '@microsoft/signalr';
-import { Message } from '../Types/message';
+import { MessageType } from '../Types/123types';
 
 const HUB_URL = process.env.REACT_APP_HUB_URL;
 let connection: signalR.HubConnection | null = null;
@@ -29,7 +29,7 @@ const safeInvoke = async (methodName: string, ...args: any[]) => {
 export const startChatConnection = async (
     userId: number,
     exchangeId: number,
-    onReceive: (msg: Message) => void
+    onReceive: (msg: MessageType) => void
 ) => {
     console.log(1, '\nStarting SignalR connection...');
 

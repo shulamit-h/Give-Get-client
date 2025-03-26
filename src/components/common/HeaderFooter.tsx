@@ -6,13 +6,10 @@ import { jwtDecode } from 'jwt-decode';
 import '../../styles/HeaderFooter.css';
 import { getProfileImage } from '../../apis/userApi';
 import Logo from '../../assets/images/logo.png';
+import { HeaderFooterPropsType } from '../../Types/123types';
 
 
-interface HeaderFooterProps {
-  children: React.ReactNode;
-}
-
-const HeaderFooter: React.FC<HeaderFooterProps> = ({ children }) => {
+const HeaderFooter: React.FC<HeaderFooterPropsType> = ({ children }) => {
   const [user, setUser] = useState<{ id: string, name: string } | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

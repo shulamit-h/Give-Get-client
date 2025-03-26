@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { startChatConnection, stopChatConnection, sendMessage } from '../../services/chatService';
 import { getChatHistory } from '../../apis/chatApi';
-import { Message } from '../../Types/message';
+import { MessageType, ChatBoxPropsType } from '../../Types/123types';
 import '../../styles/ChatBox.css';
 
-interface ChatBoxProps {
-  userId: number;
-  exchangeId: number;
-}
 
-const ChatBox: React.FC<ChatBoxProps> = ({ userId, exchangeId }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId }) => {
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [input, setInput] = useState<string>('');
   const [userImages, setUserImages] = useState<{ [key: number]: string }>({});
 

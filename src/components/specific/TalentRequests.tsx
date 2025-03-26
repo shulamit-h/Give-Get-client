@@ -3,13 +3,13 @@ import { fetchTalentRequests, deleteTalentRequest, updateTalentRequest } from '.
 import { fetchTalentById } from '../../apis/talentApi';
 import { fetchUserById } from '../../apis/userApi';
 import { Container, Typography, Paper, Button, TextField, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { TalentRequest } from '../../Types/Types';
+import { TalentRequestType } from '../../Types/123types';
 import '../../styles/TalentRequests.css';
 
 const TalentRequests: React.FC = () => {
-  const [talentRequests, setTalentRequests] = useState<TalentRequest[]>([]);
+  const [talentRequests, setTalentRequests] = useState<TalentRequestType[]>([]);
   const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
-  const [editedTalent, setEditedTalent] = useState<TalentRequest | null>(null);
+  const [editedTalent, setEditedTalent] = useState<TalentRequestType | null>(null);
   const [openDialog, setOpenDialog] = useState<{ [key: number]: boolean }>({});
   const [parentCategoryNames, setParentCategoryNames] = useState<{ [key: string]: string }>({});
 
@@ -18,7 +18,7 @@ const TalentRequests: React.FC = () => {
       try {
         const data = await fetchTalentRequests();  // שליפת בקשות הכשרונות
         const updatedRequests = await Promise.all(
-          data.map(async (request: TalentRequest) => {
+          data.map(async (request: TalentRequestType) => {
             if (!request.userId || request.userId === 0) {
               return { ...request, userName: "משתמש לא רשום" };  // אם userId הוא 0 או לא קיים, מחזירים שם ברירת מחדל
             }
@@ -76,7 +76,7 @@ const TalentRequests: React.FC = () => {
     setOpenDialog(prev => ({ ...prev, [id]: false }));
   };
 
-  const handleEdit = (request: TalentRequest) => {
+  const handleEdit = (request: TalentRequestType) => {
     console.log("Editing request:", request);
     setEditMode({ ...editMode, [request.id]: true });
     setEditedTalent({ ...request });
