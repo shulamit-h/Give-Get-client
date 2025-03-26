@@ -29,7 +29,8 @@ export type TalentType ={
   id: number;
   talentName: string;
   parentCategory: number;
-  subTalents?: TalentType[]; // Add this property
+  subTalents?: TalentType[]; 
+  isOffered: boolean; 
 }
 
 
