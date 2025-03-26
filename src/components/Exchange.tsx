@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchDealsByUser, getNotSecret , fetchTalentById, updateUserScore, updateDealStatus } from '../apis/api';
+import { fetchDealsByUser, updateDealStatus } from '../apis/exchangeApi';
+import { getNotSecret , updateUserScore } from '../apis/userApi';
+import {fetchTalentById} from '../apis/talentApi';
 import '../styles/Exchange.css';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 

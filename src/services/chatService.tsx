@@ -1,7 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import { Message } from '../Types/message';
-import { HUB_URL } from '../apis/baseUrls';
 
+const HUB_URL = process.env.REACT_APP_HUB_URL;
 let connection: signalR.HubConnection | null = null;
 
 // ממתין לחיבור יציב לפני Invoke

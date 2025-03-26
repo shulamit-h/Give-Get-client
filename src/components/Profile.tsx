@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Route, Routes } from 'react-router-dom';
-import { fetchUserData, fetchTalentsByUserId, fetchTalentById } from '../apis/api'; // ייבוא הפונקציות מה-API
+import { fetchTalentsByUserId, } from '../apis/talentUserApi';
+import { fetchTalentById } from '../apis/talentApi'; 
+import { fetchUserData} from '../apis/userApi'; 
 import '../styles/Profile.css'; // הוסף את קובץ ה-CSS שלך
 import HomeIcon from '@mui/icons-material/Home'; // ייבוא של אייקון הבית
 import { IconButton, Avatar, Typography, Button } from '@mui/material';

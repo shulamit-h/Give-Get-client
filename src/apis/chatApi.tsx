@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Message } from '../Types/message';
-import{API_BASE_URL} from './baseUrls';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
 

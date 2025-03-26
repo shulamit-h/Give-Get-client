@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTopUsers } from '../apis/usersApi';
-import { getProfileImage } from '../apis/api'; // ייבוא פונקציה לקבלת תמונת פרופיל
+import { getProfileImage } from '../apis/userApi'; // ייבוא פונקציה לקבלת תמונת פרופיל
 import '../styles/TopUsers.css';
 import { TopUser } from '../Types/TopUser';
 
