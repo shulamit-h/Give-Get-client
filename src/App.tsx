@@ -13,6 +13,7 @@ import About from './pages/AboutPage';
 import TalentRequests from './components/specific/TalentRequests';
 import Exchange from './components/specific/Exchange';
 import ChatPage from './pages/ChatPage';
+import HeaderFooter from './components/common/HeaderFooter';
 // import ExchangePage from './pages/ExchangePage';
 
 const theme = createTheme({
@@ -44,19 +45,21 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile/*" element={<Profile />} />
-          <Route path="/update-profile" element={<UpdateProfile />} />
-          <Route path="/comments" element={<Comments />} />
-          <Route path="/talents" element={<Talents />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/talent-requests" element={<TalentRequests />} />
-          <Route path="/exchange" element={<Exchange />} />
-          <Route path="/chat/:exchangeId" element={<ChatPage />} />
+        <HeaderFooter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile/*" element={<Profile />} />
+            <Route path="/update-profile" element={<UpdateProfile />} />
+            <Route path="/comments" element={<Comments />} />
+            <Route path="/talents" element={<Talents />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/talent-requests" element={<TalentRequests />} />
+            <Route path="/exchange" element={<Exchange />} />
+            <Route path="/chat/:exchangeId" element={<ChatPage />} />
           </Routes>
+        </HeaderFooter>
       </Router>
     </ThemeProvider>
   );

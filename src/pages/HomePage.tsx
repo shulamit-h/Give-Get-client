@@ -26,7 +26,6 @@ const Home = () => {
     getInspiration();
   }, []);
   return (
-    <HeaderFooter>
       <div className="home-container">
         <section className="hero-section">
           <Container maxWidth="xl" className="hero-container">
@@ -96,7 +95,6 @@ const Home = () => {
           </Container>
         </section>
       </div>
-    </HeaderFooter>
   );
 };
 
