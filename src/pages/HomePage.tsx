@@ -2,8 +2,8 @@ import React from 'react';
 import { Container, Grid, Typography, Button, Paper } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { fetchInspiration } from '../apis/InspirationApi';
-import HeaderFooter from '../components/HeaderFooter';
-import TopUsers from '../components/TopUsers';
+import HeaderFooter from '../components/common/HeaderFooter';
+import TopUsers from '../components/specific/TopUsers';
 import { useState, useEffect } from 'react';
 import '../styles/Home.css';
 

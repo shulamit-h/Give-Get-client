@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { startChatConnection, stopChatConnection, sendMessage } from '../services/chatService';
-import { getChatHistory } from '../apis/chatApi';
-import { Message } from '../Types/message';
-import '../styles/ChatBox.css';
+import { startChatConnection, stopChatConnection, sendMessage } from '../../services/chatService';
+import { getChatHistory } from '../../apis/chatApi';
+import { Message } from '../../Types/message';
+import '../../styles/ChatBox.css';
 
 interface ChatBoxProps {
   userId: number;

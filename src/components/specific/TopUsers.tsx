@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTopUsers } from '../apis/usersApi';
-import { getProfileImage } from '../apis/api'; // ייבוא פונקציה לקבלת תמונת פרופיל
-import '../styles/TopUsers.css';
-import { TopUser } from '../Types/TopUser';
+import { fetchTopUsers } from '../../apis/usersApi';
+import { getProfileImage } from '../../apis/api'; // ייבוא פונקציה לקבלת תמונת פרופיל
+import '../../styles/TopUsers.css';
+import { TopUser } from '../../Types/TopUser';
 
 const TopUsers: React.FC = () => {
   const [topUsers, setTopUsers] = useState<(TopUser & { profileImage: string })[]>([]); // הוספת profileImage דינמית

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTalentRequests, deleteTalentRequest, updateTalentRequest, fetchUserById, fetchTalentById } from '../apis/api';
+import { fetchTalentRequests, deleteTalentRequest, updateTalentRequest, fetchUserById, fetchTalentById } from '../../apis/api';
 import { Container, Typography, Paper, Button, TextField, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { TalentRequest } from '../Types/Types';
-import '../styles/TalentRequests.css';
+import { TalentRequest } from '../../Types/Types';
+import '../../styles/TalentRequests.css';
 
 const TalentRequests: React.FC = () => {
   const [talentRequests, setTalentRequests] = useState<TalentRequest[]>([]);

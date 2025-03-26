@@ -3,9 +3,9 @@ import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Avatar
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { jwtDecode } from 'jwt-decode';
-import '../styles/HeaderFooter.css';
-import { getProfileImage } from '../apis/api'; // Ensure getProfileImage is imported
-import Logo from '../images/logo.png'
+import '../../styles/HeaderFooter.css';
+import { getProfileImage } from '../../apis/api'; // Ensure getProfileImage is imported
+import Logo from '../../assets/images/logo.png';
 interface HeaderFooterProps {
   children: React.ReactNode;
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchDealsByUser, getNotSecret , fetchTalentById, updateUserScore, updateDealStatus } from '../apis/api';
-import '../styles/Exchange.css';
+import { fetchDealsByUser, getNotSecret , fetchTalentById, updateUserScore, updateDealStatus } from '../../apis/api';
+import '../../styles/Exchange.css';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 
 const Exchange = () => {

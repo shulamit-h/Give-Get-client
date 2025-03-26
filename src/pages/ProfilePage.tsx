@@ -4,9 +4,9 @@ import { fetchUserData, fetchTalentsByUserId, fetchTalentById } from '../apis/ap
 import '../styles/Profile.css'; // הוסף את קובץ ה-CSS שלך
 import HomeIcon from '@mui/icons-material/Home'; // ייבוא של אייקון הבית
 import { IconButton, Avatar, Typography, Button } from '@mui/material';
-import UpdateProfile from './UpdateProfile'; 
-import Exchange from './Exchange';
-import TalentRequests from './TalentRequests'; // ייבוא הקומפוננטה החדשה
+import UpdateProfile from '../components/specific/UpdateProfile'; 
+import Exchange from '../components/specific/Exchange';
+import TalentRequests from '../components/specific/TalentRequests'; // ייבוא הקומפוננטה החדשה
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
