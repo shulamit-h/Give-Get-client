@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Avatar, Container } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import '../styles/HeaderFooter.css';
 import { getProfileImage } from '../apis/api'; // Ensure getProfileImage is imported
-
+import Logo from '../images/logo.png'
 interface HeaderFooterProps {
   children: React.ReactNode;
 }
@@ -65,6 +65,7 @@ const HeaderFooter: React.FC<HeaderFooterProps> = ({ children }) => {
     <div className="layout-container">
       <AppBar position="sticky" className="app-bar">
         <Toolbar>
+
           {user ? (
             <div className="user-info">
               <IconButton onClick={handleMenu} color="inherit">
@@ -86,6 +87,10 @@ const HeaderFooter: React.FC<HeaderFooterProps> = ({ children }) => {
           ) : (
             <Button color="inherit" component={RouterLink} to="/login">התחברות</Button>
           )}
+
+          <IconButton edge="start" color="inherit" component={RouterLink} to="/">
+            <img src={Logo} alt="לוגו האתר" className="logo" />
+          </IconButton>
           <Typography variant="h6" className="app-title animated-text">
             {messages[messageIndex]}
           </Typography>

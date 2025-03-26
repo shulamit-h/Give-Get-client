@@ -1,11 +1,30 @@
 import React from 'react';
 import { Container, Grid, Typography, Button, Paper } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { fetchInspiration } from '../apis/InspirationApi';
 import HeaderFooter from '../components/HeaderFooter';
 import TopUsers from '../components/TopUsers';
+import { useState, useEffect } from 'react';
 import '../styles/Home.css';
 
+
+
+
+
 const Home = () => {
+  const [inspiration, setInspiration] = useState('');
+
+  useEffect(() => {
+    const getInspiration = async () => {
+      try {
+        const quote = await fetchInspiration();
+        setInspiration(quote);
+      } catch (error) {
+        console.error('Error fetching inspiration:', error);
+      }
+    };
+    getInspiration();
+  }, []);
   return (
     <HeaderFooter>
       <div className="home-container">
@@ -17,6 +36,12 @@ const Home = () => {
             <Typography variant="h5" className="hero-subtitle">
               הציגו, גלו והתחברו למספר כישרונות במגוון תחומים – המעבר שלכם להצלחה מתחיל כאן.
             </Typography>
+            {inspiration && (
+              <Typography variant="h6" className="inspiration-quote">
+                "{inspiration}"
+              </Typography>
+            )}
+
             <div className="hero-buttons">
               <Button variant="contained" className="hero-button" component={RouterLink} to="/register">
                 הרשמה

@@ -54,3 +54,9 @@
     margin-left: 10px;
     color: #fff;
   }
+
+  .logo {
+    height: 50px; /* או גודל אחר לפי הצורך */
+    margin-right: 15px;
+  }
+  
