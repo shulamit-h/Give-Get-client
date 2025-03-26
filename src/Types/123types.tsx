@@ -29,7 +29,9 @@ export type TalentType ={
   id: number;
   talentName: string;
   parentCategory: number;
+  subTalents?: TalentType[]; // Add this property
 }
+
 
 export type MessageType = {
   fromUserId: number;
