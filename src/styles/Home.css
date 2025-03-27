@@ -1,3 +1,4 @@
+@import './colors.css';
 /* עיצוב כללי לדף הבית */
 .home-container {
   display: flex;
@@ -13,12 +14,13 @@
 
 /* אזור הגיבור */
 .hero-section {
-  background-color: #d6878bac; /* ירוק טורקיז */
-  padding: 80px 20px; /* התאמת הריווח למסכים קטנים יותר */
+  background-color: var(--light-yellow); /* ירוק טורקיז */
+  padding: 65px 20px; /* התאמת הריווח למסכים קטנים יותר */
   text-align: center;
   position: relative;
   overflow: hidden;
   width: 100%;
+  margin-top: -300px;
 }
 
 .hero-container {
@@ -37,9 +39,11 @@
   font-size: 1.5rem;
   margin-bottom: 40px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: var(--soft-coral);
 }
 
 .hero-buttons {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -90,8 +94,8 @@
   margin-top: 20px;
   font-style: italic;
   font-size: 1.2rem;
-  color: var(--pearl-cream);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: var(--soft-yellow);
 }
 
 

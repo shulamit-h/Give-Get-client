@@ -1,8 +1,12 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  margin-top: 400px;
+  margin-top: 5%;
+  width: 30%;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 50px;
+  margin-right: 35%;
 }
 .auth-form-login {
   display: flex;

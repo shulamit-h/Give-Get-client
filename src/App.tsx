@@ -15,6 +15,7 @@ import Exchange from './components/specific/Exchange';
 import ChatPage from './pages/ChatPage';
 import HeaderFooter from './components/common/HeaderFooter';
 // import ExchangePage from './pages/ExchangePage';
+import './App.css';
 
 const theme = createTheme({
   palette: {
