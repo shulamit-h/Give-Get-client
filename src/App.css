@@ -48,7 +48,12 @@ main {
   flex-grow: 1;
 }
 
-
+h2, h6{
+  color: var(--soft-coral);
+}
+li, a{
+  color: #333;
+}
 
 @keyframes App-logo-spin {
   from {

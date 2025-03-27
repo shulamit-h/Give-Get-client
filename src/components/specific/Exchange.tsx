@@ -166,11 +166,11 @@ const Exchange = () => {
 
     console.log(`Filtered deals for status ${status}:`, filteredDeals);
     if (filteredDeals.length === 0) {
-      return <div className="no-deals-message">לא נמצאו עסקאות בקטגוריה זו.</div>;
+      return <div id='no-deals-message' className="no-deals-message">לא נמצאו עסקאות בקטגוריה זו.</div>;
     }
 
     return (
-      <ul>
+      <ul >
         {filteredDeals.map(deal => (
           <li key={deal.id} className="deal-item">
             <div className="user"><strong>משתמש 1:</strong> {deal.user1Name}</div>
@@ -266,7 +266,7 @@ const Exchange = () => {
         <Tab label="עסקאות באמצע" icon={<Cached />} />
         <Tab label="עסקאות שהסתימו" icon={<Done />} />
       </Tabs>
-      <Box>
+      <Box className = "deals-box">
         {tabIndex === 0 && renderDeals('0')}
         {tabIndex === 1 && renderDeals('1')}
         {tabIndex === 2 && renderDeals('2')}

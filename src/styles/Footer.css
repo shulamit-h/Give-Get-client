@@ -1,6 +1,6 @@
 .footer {
     background: linear-gradient(135deg, #ff6f91, #ff9a8b); /* מעבר צבעים ורוד זוהר */
-    color: white;
+    color: var(--soft-coral);
     text-align: center;
     padding: 15px;
     font-size: 1rem;

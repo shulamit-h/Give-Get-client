@@ -113,7 +113,7 @@ const TalentRequests: React.FC = () => {
   return (
     <Container maxWidth="md" className='head'>
       <div className='req'>
-        <Typography variant="h4" gutterBottom className="req-title">
+        <Typography variant="h2" gutterBottom className="req-title">
           בקשות להוספת כשרונות
         </Typography>
         {talentRequests.map((request) => {

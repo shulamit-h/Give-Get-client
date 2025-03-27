@@ -84,7 +84,7 @@ const Talents = () => {
 
   return (
     <Container maxWidth="md" className="talents-container">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h2" gutterBottom>
         הכישרונות שלנו
       </Typography>
 
