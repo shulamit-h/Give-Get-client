@@ -106,7 +106,7 @@ const HeaderFooter: React.FC<HeaderFooterPropsType> = ({ children }) => {
 
       <footer className="footer">
         <Container maxWidth="xl">
-          <Typography variant="body2" align="center">
+          <Typography variant="body2" align="center" id="footer-text">
             © 2025 אתר הכישרונות. כל הזכויות שמורות ️❤️ לרחלי ולשולמית❤.
           </Typography>
         </Container>

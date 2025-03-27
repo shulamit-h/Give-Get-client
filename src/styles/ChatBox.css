@@ -85,7 +85,7 @@
   
   .input-area button {
     padding: 10px 20px;
-    background-color: #e173cf;
+    background-color: var(--light-blue);
     color: var(--pearl-cream);
     border: none;
     border-radius: 20px;
@@ -94,5 +94,5 @@
   }
   
   .input-area button:hover {
-    background-color: #f6adf7;
+    background-color: var(--mint-green);
   }

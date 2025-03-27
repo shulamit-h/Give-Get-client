@@ -66,3 +66,7 @@ html, body {
     height: 50px; /* או גודל אחר לפי הצורך */
     margin-right: 15px;
 }
+
+#footer-text{
+  color: var(--soft-coral);
+}

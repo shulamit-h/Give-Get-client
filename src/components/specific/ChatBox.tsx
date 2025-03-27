@@ -74,7 +74,7 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId, otherUserId }
           onChange={(e) => setInput(e.target.value)}
           placeholder="כתוב הודעה..."
         />
-        <button onClick={handleSend}>שלח</button>
+        <button type='submit' onClick={handleSend}>שלח</button>
       </div>
     </div>
   );
