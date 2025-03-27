@@ -25,7 +25,7 @@
 .deal-item {
   padding: 20px;
   margin-bottom: 20px;
-  background-color: #ffffff;
+  background-color: var(--pearl-cream)fff;
   border: 1px solid #ddd;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -114,11 +114,11 @@
 }
 
 .like-button.active svg {
-  color: #ffffff;
+  color: var(--pearl-cream)fff;
 }
 
 .dislike-button.active svg {
-  color: #ffffff;
+  color: var(--pearl-cream)fff;
 }
 .like-button.active {
   background-color: #c3e6cb; /* צבע ירוק בהיר */

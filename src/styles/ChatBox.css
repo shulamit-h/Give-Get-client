@@ -14,7 +14,7 @@
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    background-color: #ffffff;
+    background-color: var(--pearl-cream)fff;
   }
   
   .message {
@@ -86,7 +86,7 @@
   .input-area button {
     padding: 10px 20px;
     background-color: #e173cf;
-    color: #fff;
+    color: var(--pearl-cream);
     border: none;
     border-radius: 20px;
     cursor: pointer;

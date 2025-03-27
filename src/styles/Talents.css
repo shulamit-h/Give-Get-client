@@ -58,7 +58,7 @@
   /* תופס את כל הרוחב */
   max-width: 600px;
   /* מגביל את הרוחב המקסימלי */
-  background-color: #ffffff;
+  background-color: var(--pearl-cream)fff;
   border: 2px dashed #b53f80;
   border-radius: 8px;
   text-align: right;

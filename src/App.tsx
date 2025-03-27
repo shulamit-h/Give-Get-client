@@ -19,10 +19,10 @@ import HeaderFooter from './components/common/HeaderFooter';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#d6878b',
+      main: '#ffb562',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#ffb562',
     },
   },
   typography: {

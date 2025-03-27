@@ -16,7 +16,7 @@
   .chats-page li {
     padding: 10px;
     margin: 10px 0;
-    background-color: #fff;
+    background-color: var(--pearl-cream);
     border: 1px solid #ddd;
     border-radius: 5px;
     cursor: pointer;
