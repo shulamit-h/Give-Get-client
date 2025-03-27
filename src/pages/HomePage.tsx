@@ -52,42 +52,6 @@ const Home = () => {
           </Container>
         </section>
 
-        <section className="features-section">
-          <Container maxWidth="xl" className="features-container">
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Paper elevation={4} className="feature-card">
-                  <Typography variant="h5" gutterBottom>
-                    גלו כישרונות
-                  </Typography>
-                  <Typography variant="body1">
-                    מצאו כישרונות חדשים ומרתקים, וגלו עולמות חדשים של יצירתיות.
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Paper elevation={4} className="feature-card">
-                  <Typography variant="h5" gutterBottom>
-                    הציגו את הכשרון שלכם
-                  </Typography>
-                  <Typography variant="body1">
-                    הציגו את היכולות שלכם בצורה מרהיבה וקבלו הכרה והערכה מהקהילה.
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Paper elevation={4} className="feature-card">
-                  <Typography variant="h5" gutterBottom>
-                    התחברו עם אנשים
-                  </Typography>
-                  <Typography variant="body1">
-                    חוו אינטראקציות משמעותיות ושיתופי פעולה שיעניקו לכם השראה והצלחה.
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
-          </Container>
-        </section>
 
         <section className="top-users-section">
           <Container maxWidth="xl">

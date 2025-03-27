@@ -15,14 +15,15 @@ import Exchange from './components/specific/Exchange';
 import ChatPage from './pages/ChatPage';
 import HeaderFooter from './components/common/HeaderFooter';
 // import ExchangePage from './pages/ExchangePage';
+import './App.css';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#d6878b',
+      main: '#ffb562',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#ffb562',
     },
   },
   typography: {
