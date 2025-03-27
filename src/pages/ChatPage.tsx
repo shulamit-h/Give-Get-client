@@ -6,15 +6,15 @@ const ChatPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get('userId');  // שליפת ה-userId מה-URL
-
-  if (!exchangeId || !userId) {
-    return <div>Exchange ID or User ID is missing</div>;
+  const userId2 = queryParams.get('userId2'); // שליפת ה-userId2 מה-URL
+  if (!exchangeId || !userId || !userId2) {
+    return <div>Exchange ID, User ID or User ID 2 is missing</div>;
   }
 
   return (
     <div className="chat-page">
       <h2>צ'אט העסקה</h2>
-      <ChatBox userId={Number(userId)} exchangeId={Number(exchangeId)} />
+      <ChatBox userId={Number(userId)} exchangeId={Number(exchangeId)} otherUserId={Number(userId2)} />
     </div>
   );
 };

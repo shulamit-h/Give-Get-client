@@ -52,8 +52,8 @@ export const startChatConnection = async (
         .withAutomaticReconnect()
         .build();
 
-    connection.on('ReceiveMessage', (fromUserId: number, text: string, timestamp: string) => {
-        onReceive({ fromUserId, text, timestamp });
+    connection.on('ReceiveMessage', (fromId: number, text: string, time: string) => {
+        onReceive({ fromId, text, time });
     });
 
     connection.onclose((error) => {

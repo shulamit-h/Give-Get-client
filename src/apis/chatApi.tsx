@@ -15,5 +15,8 @@ export const getChatHistory = async (exchangeId: number): Promise<MessageType[]>
   const response = await axios.get(`${API_BASE_URL}/Chat/history/${exchangeId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("API response:", response.data);
+
+  
   return response.data;
 };

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { startChatConnection, stopChatConnection, sendMessage } from '../../services/chatService';
 import { getChatHistory } from '../../apis/chatApi';
+import { getProfileImage } from '../../apis/userApi';
 import { MessageType, ChatBoxPropsType } from '../../Types/123types';
+import defaultUserImage from '../../assets/images/default-user.png';
 import '../../styles/ChatBox.css';
 
-
-const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId }) => {
+const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId, otherUserId }) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [input, setInput] = useState<string>('');
   const [userImages, setUserImages] = useState<{ [key: number]: string }>({});
@@ -15,11 +16,12 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId }) => {
       try {
         const history = await getChatHistory(exchangeId);
         setMessages(history);
+        console.log('Chat history:', history.map((msg) => msg.text));
 
-        // דוגמה לטעינת תמונות משתמשים (ניתן להחליף ב-API אמיתי)
+        // טעינת תמונות עבור המשתמשים
         const images = {
-          [userId]: '/path/to/current-user.jpg', // תמונת המשתמש הנוכחי
-          2: '/path/to/other-user.jpg', // תמונת משתמש אחר
+          [userId]: await getProfileImage(userId), // תמונת המשתמש הנוכחי
+          [otherUserId]: await getProfileImage(otherUserId), // תמונת המשתמש השני
         };
         setUserImages(images);
 
@@ -36,12 +38,12 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId }) => {
     return () => {
       stopChatConnection();
     };
-  }, [userId, exchangeId]);
+  }, [userId, exchangeId, otherUserId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     console.log('Sending message:', input);
-    await sendMessage(exchangeId, userId, input);
+    await sendMessage(exchangeId, userId, input); // שליחת הודעה למשתמש הנוכחי
     setInput('');
   };
 
@@ -51,16 +53,16 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId }) => {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`message ${msg.fromUserId === userId ? 'sent' : 'received'}`}
+            className={`message ${msg.fromId === userId ? 'sent' : 'received'}`}
           >
             <img
-              src={userImages[msg.fromUserId] || '/path/to/default-user.jpg'}
+              src={userImages[msg.fromId] || defaultUserImage}
               alt="User"
               className="user-image"
             />
             <div className="message-content">
               <p>{msg.text}</p>
-              <small>{new Date(msg.timestamp).toLocaleTimeString()}</small>
+              <small>{new Date(msg.time).toLocaleString()}</small>
             </div>
           </div>
         ))}

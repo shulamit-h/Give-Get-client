@@ -269,8 +269,10 @@ const Exchange = () => {
             </div>
             <button
               className="chat-button"
-              onClick={() => navigate(`/chat/${deal.id}?userId=${userId}`)}
-            >
+              onClick={() => {
+                const otherUserId = deal.user1Id === Number(userId) ? deal.user2Id : deal.user1Id;
+                navigate(`/chat/${deal.id}?userId=${userId}&userId2=${otherUserId}`);
+              }}            >
               מעבר לצ'אט
             </button>
           </li>

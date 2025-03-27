@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchTopUsers,getProfileImage} from '../../apis/userApi';
 import '../../styles/TopUsers.css';
 import { TopUserType } from '../../Types/123types';
+import defaultUserImage from '../../assets/images/default-user.png';
 
 const TopUsers: React.FC = () => {
   const [topUsers, setTopUsers] = useState<(TopUserType & { profileImage: string })[]>([]); // הוספת profileImage דינמית
@@ -24,7 +25,7 @@ const TopUsers: React.FC = () => {
                 profileImage = await getProfileImage(Number(userId)); // שליחה של המזהה לפונקציה
               } catch (error) {
                 console.error('Error fetching profile image for user:', userId, error);
-                profileImage = '/path/to/default-image.jpg'; // תמונת ברירת מחדל במקרה של שגיאה
+                profileImage =defaultUserImage; // תמונת ברירת מחדל במקרה של שגיאה
               }
             }
     

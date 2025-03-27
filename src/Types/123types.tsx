@@ -35,9 +35,9 @@ export type TalentType ={
 
 
 export type MessageType = {
-  fromUserId: number;
+  fromId: number;
   text: string;
-  timestamp: string;
+  time: string;
 }
 
 export type HeaderFooterPropsType ={
@@ -55,6 +55,7 @@ export type CommentType  = {
 export type ChatBoxPropsType ={
   userId: number;
   exchangeId: number;
+  otherUserId: number; 
 }
 
 export type UserType = {
