@@ -55,9 +55,9 @@ const TopUsers: React.FC = () => {
       <ul className="top-users-list">
         {topUsers.map((user, index) => (
           <li key={index} className="top-user-item">
-            <img src={user.profileImage} alt={user.username} className="user-image" />
+            <img src={user.profileImage} alt={user.userName} className="user-image" />
             <div className="user-details">
-              <h3>{user.username}</h3>
+              <h3>{user.userName}</h3>
               <p>ציון: {user.score}</p>
               <p>{user.desc}</p>
             </div>

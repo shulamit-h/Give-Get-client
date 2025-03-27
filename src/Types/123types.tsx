@@ -8,7 +8,7 @@ export type TalentRequestType = {
 }
 
 export type TopUserType = {
-  username: string;
+  userName: string;
   score: number;
   desc: string;
   profileImageUrl: string;
