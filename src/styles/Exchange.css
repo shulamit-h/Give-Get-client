@@ -55,7 +55,7 @@
 
 .deal-item div.date {
   font-style: italic;
-  color: #7f8c8d; /* צבע תאריך */
+  color: var(--light-yellow); /* צבע תאריך */
 }
 
 .deal-item div.user {
