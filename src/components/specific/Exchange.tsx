@@ -6,6 +6,7 @@ import { getNotSecret, updateUserScore } from '../../apis/userApi';
 import { fetchTalentById } from '../../apis/talentApi';
 import '../../styles/Exchange.css';
 import { Tabs, Tab, Box, Button } from '@mui/material';
+import { log } from 'console';
 
 const Exchange = () => {
   const [deals, setDeals] = useState<any[]>([]);
@@ -18,24 +19,28 @@ const Exchange = () => {
   const userId = new URLSearchParams(location.search).get('userId');
 
   useEffect(() => {
+    console.log('Fetching deals for user ID:', userId);
+    
     const getDeals = async () => {
+      console.log('Fetching deals for user ID:', userId);
+      
       try {
         if (dealsLoaded) return;  // אם כבר טענת את הנתונים, אל תעשה זאת שוב
 
         if (userId) {
           console.log(`Fetching deals for user ID: ${userId}`);
 
-          // בדיקה אם המידע כבר קיים במטמון
-          const cachedDeals = localStorage.getItem(`deals_${userId}`);
-          if (cachedDeals) {
-            console.log('Loading deals from cache');
-            setDeals(JSON.parse(cachedDeals));
-            setLoading(false);
-            setDealsLoaded(true); 
-            return;
-          }
-
+          // // בדיקה אם המידע כבר קיים במטמון
+          // const cachedDeals = localStorage.getItem(`deals_${userId}`);
+          // if (cachedDeals) {
+          //   console.log('Loading deals from cache');
+          //   setDeals(JSON.parse(cachedDeals));
+          //   setLoading(false);
+          //   setDealsLoaded(true); 
+          //   return;
+          // }          
           const dealsData = await fetchDealsByUser(Number(userId));
+          
           console.log('Deals data:', dealsData);
 
           const updatedDeals = await Promise.all(
@@ -76,10 +81,11 @@ const Exchange = () => {
     };
 
     // נקרא רק אם userId קיים
+    console.log('User ID:', userId);
     if (userId) {
       getDeals();
     }
-  }, [userId, dealsLoaded]);
+  }, [userId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     console.log(`Tab changed to index: ${newValue}`);
@@ -291,7 +297,7 @@ const Exchange = () => {
 
   return (
     <div className="deals-container">
-      <h2>התאמות</h2>
+      <h2>התאמות ליוזר</h2>
       <Tabs value={tabIndex} onChange={handleTabChange} aria-label="status tabs">
         <Tab label="עסקאות חדשות" icon={<NewReleases />} />
         <Tab label="עסקאות בהמתנה" icon={<HourglassEmpty />} />
