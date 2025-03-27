@@ -1,16 +1,17 @@
 import React from "react";
 import { Container, Typography, Grid, Card, CardContent, Button } from "@mui/material";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import "../styles/About.css";
+import "../styles/colors.css"; // חיבור לקובץ הצבעים
 
 const About = () => {
   return (
     <div className="about-wrapper">
-      {/* רקע מונפש */}
       <div className="background-animation"></div>
 
       <Container maxWidth="lg" className="about-container">
-        {/* כותרת עם טקסט דינמי */}
+        {/* אנימציה של כותרת ראשית */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -18,32 +19,46 @@ const About = () => {
           className="title-wrapper"
         >
           <Typography variant="h3" className="about-title">
-            SwapSkills: <span className="magic-text">לומדים. מחליפים. מתקדמים.</span>
+            <span className="magic-text"> Give & Get: תנו, קבלו, התקדמו.</span>
           </Typography>
-          <Typography variant="h6" className="about-subtitle">
-            הגיע הזמן לנצל את הכישרונות שלך בצורה הטובה ביותר!  
-          </Typography>
+          
         </motion.div>
 
-        {/* כרטיסיות עם אנימציות */}
-        <Grid container spacing={4} className="about-sections">
-          {[
-            { icon: "⚡", title: "מה זה SwapSkills?", text: "פלטפורמה להחלפת כישורים – את לומדת, את מלמדת, את מרוויחה!" },
-            { icon: "🔄", title: "איך זה עובד?", text: "מציינת כישורים, בוחרת מה ללמוד, ומוצאת התאמות מדויקות – הכל בלחיצת כפתור!" },
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="subtitle-wrapper"
+        >
+          <Typography variant="h5" className="about-subtitle">
+            <span className="magic-text">הגיע הזמן לנצל את הכישרונות שלכם בצורה הטובה ביותר!</span>
+            
+          </Typography>
+          
+        </motion.div>
+
+        
+
+        {/* הכרטיסים */}
+        <Grid container spacing={2} className="about-sections">
+          {[ 
+            { icon: "⚡", title: "מה זה Give & Get?", text: "פלטפורמה להחלפת כישורים – אתם נותנים, לומדים, ומרוויחים!" },
+            { icon: "🔄", title: "איך זה עובד?", text: "מציינים כישורים, בוחרים מה ללמוד, ומוצאים התאמות מדויקות – הכל בלחיצת כפתור!" },
             { icon: "🔥", title: "למה זה מגניב?", text: "כי לומדים, מרוויחים נקודות, ומתחברים לקהילה חכמה." },
-            { icon: "🚀", title: "הצטרפי עכשיו!", text: "אל תפספסי את ההזדמנות להתחיל להחליף ידע עם אחרים!" }
+            { icon: "🚀", title: "הצטרפו עכשיו!", text: "אל תפספסו את ההזדמנות להתחיל להחליף ידע עם אחרים!" }
           ].map((item, index) => (
-            <Grid item xs={12} md={6} key={index}>
+            <Grid item xs={12} sm={6} md={3} key={index}>
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 2 }}
                 whileTap={{ scale: 0.95 }}
+                className={`card-wrapper color-${index}`}
               >
                 <Card className="about-card">
                   <CardContent>
-                    <Typography variant="h5" className="card-title">
+                    <Typography variant="h6" className="card-title">
                       {item.icon} {item.title}
                     </Typography>
-                    <Typography variant="body1">{item.text}</Typography>
+                    <Typography variant="body2">{item.text}</Typography>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -58,9 +73,11 @@ const About = () => {
           transition={{ delay: 1 }}
           className="cta-wrapper"
         >
-          <Button variant="contained" className="join-button">
-            ✨ הצטרפי עכשיו בחינם!
-          </Button>
+          <Link to="/register" style={{ textDecoration: "none" }}>
+            <Button variant="contained" className="join-button">
+              ✨ הצטרפו עכשיו בחינם!
+            </Button>
+          </Link>
         </motion.div>
       </Container>
     </div>
