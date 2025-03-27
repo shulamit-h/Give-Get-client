@@ -7,8 +7,7 @@ html, body {
 .layout-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  position: relative; /* חשוב, כדי שהפוטר ידע להיתמך עליו */
+  min-height: 100vh; /* הגדרת גובה מינימלי לדף */
 }
 
 .content-container {
@@ -43,9 +42,10 @@ html, body {
   color: #fff;
   text-align: center;
   width: 100%;
-  position: absolute; /* פוטר שנדבק לתחתית */
-  bottom: 0; /* תמיד בתחתית */
+  margin-top: auto; /* דוחף את הפוטר לתחתית */
 }
+
+
   .layout-container {
     width: 1520px;
   }
