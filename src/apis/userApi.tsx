@@ -43,7 +43,7 @@ export const fetchUserData = async () => {
       const userData = response.data;
       userData.profileImageUrl = userData.profileImageUrl ? `${API_BASE_URL}/User/profile-image/${userData.id}` : '/path/to/default-image.jpg'; // שים תמונה ברירת מחדל במקרה שאין תמונה
   
-      console.log('User data from API:', userData); // הדפסת הנתונים שהתקבלו
+      // console.log('User data from API:', userData); // הדפסת הנתונים שהתקבלו
       return userData;
     } catch (error: any) {
       throw error.response ? error.response.data : error.message;

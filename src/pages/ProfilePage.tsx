@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Route, Routes } from 'react-router-dom';
 import useUserData from '../hooks/useUserData';
 import useTalents from '../hooks/useTalents';
@@ -12,29 +12,39 @@ import ProfileDetails from '../components/specific/ProfileDetails';
 import ProfileTalents from '../components/specific/ProfileTalents';
 
 const Profile = () => {
-  const { user, errorMessage: userError } = useUserData();
+  const { user, errorMessage: userError, refreshUserData } = useUserData();
   const { talents, errorMessage: talentsError, fetchUserTalents } = useTalents(user?.id);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // אם אין משתמש, אין צורך לבצע את הקריאה
     if (user) {
-      fetchUserTalents();
+      const refreshData = async () => {
+        await refreshUserData(); // רענון נתוני המשתמש
+        await fetchUserTalents(); // רענון נתוני הכישרונות
+      };
+      refreshData();
     }
-  }, [user]);
+  }, [user, refreshUserData, fetchUserTalents]);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     navigate('/login');
   };
 
-  const handleViewDetails = () => {
-    setErrorMessage(null);
-    navigate('/profile');
+  const handleViewDetails = async () => {
+    try {
+      await refreshUserData(); // רענון נתוני המשתמש
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
   };
 
   const handleViewTalents = async () => {
     setErrorMessage(null);
+    await fetchUserTalents(); // רענון נתוני הכישרונות
     navigate('/profile/talents');
   };
 

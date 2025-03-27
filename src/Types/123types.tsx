@@ -65,7 +65,7 @@ export type UserType = {
   score: number;
   talentsOffered: TalentUserDtoType[];  // עדכון לסוג המתאים
   talentsWanted: TalentUserDtoType[];   // עדכון לסוג המתאים
-  age: number;
+  age: string;
   gender: 'Male' | 'Female';
   desc: string;
   isActive: boolean;

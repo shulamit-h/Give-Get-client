@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ThumbUp, ThumbDown, NewReleases, HourglassEmpty, Cached, Done } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchDealsByUser, updateDealStatus } from '../../apis/exchangeApi';
-import { getNotSecret , updateUserScore } from '../../apis/userApi';
-import {fetchTalentById} from '../../apis/talentApi';
+import { getNotSecret, updateUserScore } from '../../apis/userApi';
+import { fetchTalentById } from '../../apis/talentApi';
 import '../../styles/Exchange.css';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 
@@ -12,6 +12,7 @@ const Exchange = () => {
   const [loading, setLoading] = useState(true);
   const [likedDeals, setLikedDeals] = useState<{ [key: string]: 'like' | 'dislike' | null }>({});
   const [tabIndex, setTabIndex] = useState(0);
+  const [dealsLoaded, setDealsLoaded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = new URLSearchParams(location.search).get('userId');
@@ -19,8 +20,21 @@ const Exchange = () => {
   useEffect(() => {
     const getDeals = async () => {
       try {
+        if (dealsLoaded) return;  // אם כבר טענת את הנתונים, אל תעשה זאת שוב
+
         if (userId) {
           console.log(`Fetching deals for user ID: ${userId}`);
+
+          // בדיקה אם המידע כבר קיים במטמון
+          const cachedDeals = localStorage.getItem(`deals_${userId}`);
+          if (cachedDeals) {
+            console.log('Loading deals from cache');
+            setDeals(JSON.parse(cachedDeals));
+            setLoading(false);
+            setDealsLoaded(true); 
+            return;
+          }
+
           const dealsData = await fetchDealsByUser(Number(userId));
           console.log('Deals data:', dealsData);
 
@@ -46,6 +60,9 @@ const Exchange = () => {
 
           setDeals(updatedDeals);
 
+          // שמירת התוצאה במטמון
+          localStorage.setItem(`deals_${userId}`, JSON.stringify(updatedDeals));
+
           const storedLikes = JSON.parse(localStorage.getItem(`likedDeals_${userId}`) || '{}');
           console.log('Stored likes:', storedLikes);
           setLikedDeals(storedLikes);
@@ -54,11 +71,15 @@ const Exchange = () => {
         console.error('Error fetching deals:', error);
       } finally {
         setLoading(false);
+        setDealsLoaded(true);  // סימן שסיימת לטעון את הנתונים
       }
     };
 
-    getDeals();
-  }, [userId]);
+    // נקרא רק אם userId קיים
+    if (userId) {
+      getDeals();
+    }
+  }, [userId, dealsLoaded]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     console.log(`Tab changed to index: ${newValue}`);
@@ -145,6 +166,15 @@ const Exchange = () => {
           return d;
         })
       );
+    //   // עדכון המטמון עם הנתונים החדשים
+    //   localStorage.setItem(`deals_${userId}`, JSON.stringify(deals.map(d => 
+    //     d.id === deal.id ? { 
+    //         ...d, 
+    //         status: updatedDeal.status.toString(),
+    //         user1Confirmed: updatedDeal.user1Confirmed,
+    //         user2Confirmed: updatedDeal.user2Confirmed,
+    //     } : d
+    // )));
     } catch (error) {
       console.error('Error updating deal status:', error);
     }
@@ -164,7 +194,7 @@ const Exchange = () => {
       return false;
     });
 
-    console.log(`Filtered deals for status ${status}:`, filteredDeals);
+    // console.log(`Filtered deals for status ${status}:`, filteredDeals);
     if (filteredDeals.length === 0) {
       return <div className="no-deals-message">לא נמצאו עסקאות בקטגוריה זו.</div>;
     }
