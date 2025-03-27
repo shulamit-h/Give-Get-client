@@ -75,7 +75,6 @@ const Comments = () => {
   };
 
   return (
-    <HeaderFooter>
       <Container maxWidth="md" className="comments-container">
         <Typography variant="h4" gutterBottom>
           תגובות
@@ -117,7 +116,6 @@ const Comments = () => {
           </Typography>
         </Paper>
       </Container>
-    </HeaderFooter>
   );
 };
 
