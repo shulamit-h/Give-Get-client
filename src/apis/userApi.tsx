@@ -96,11 +96,16 @@ export const updateUserData = async (userId: number, userData: FormData) => {
 };
 
 export const getProfileImage = async (userId: number) => {
+  try {
     const response = await axios.get(`${API_BASE_URL}/user/profile-image/${userId}`, {
       responseType: 'arraybuffer'
     });
     const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
     return URL.createObjectURL(imageBlob);
+  } catch (error) {
+    // אם יש שגיאה (למשל 404), נחזיר תמונת ברירת מחדל מקומית
+    return require('../assets/images/default-user.png');
+  }
 };
 
 export const updateUserScore = async (userId: number, action: number) => {
