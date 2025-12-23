@@ -10,7 +10,7 @@ import '../../styles/AuthForm.css';
 import PersonalDetailsForm from './PersonalDetailsForm';
 import useUserData from '../../hooks/useUserData';
 import useTalents from '../../hooks/useTalents';
-import TalentSelection from './TalentSelection'; // עדכן את הנתיב בהתאם למיקום הקובץ
+import TalentSelection from './TalentSelection'; // Update the path according to file location
 
 const UpdateProfile = () => {
 
@@ -59,7 +59,7 @@ const UpdateProfile = () => {
       try {
         const userData = await fetchUserData();
         if (userData.id === userId) {
-          // מונע עדכון במידה והנתונים לא השתנו
+          // Prevent update if the data hasn't changed
           return;
         }
         setUserId(userData.id);
@@ -193,7 +193,7 @@ const UpdateProfile = () => {
   };
 
 
-  // יצירת refs עבור כל אחד מהשדות בטופס
+  // Create refs for each form field
   const errorRef = useRef<HTMLDivElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -219,7 +219,7 @@ const UpdateProfile = () => {
     if (Object.values(newFieldErrors).some(error => error)) {
       setFieldErrors(newFieldErrors);
       setError('נא למלא את כל השדות החובה המסומנים באדום.');
-      // גלילה לשדה הראשון שיש בו שגיאה
+      // Scroll to the first field with an error
       if (newFieldErrors.username) {
         usernameRef.current?.scrollIntoView({ behavior: 'smooth' });
       } else if (newFieldErrors.email) {
@@ -239,7 +239,7 @@ const UpdateProfile = () => {
       return;
     }
 
-    // בדיקה אם יש כשרון שנבחר גם ברשימת הכשרונות המוצעים וגם ברשימת הכשרונות הרצויים
+    // Check if a talent is selected in both offered and wanted lists
     const commonTalents = formData.offeredTalents.filter(talentId => formData.wantedTalents.includes(talentId));
 
     const hasCommonParentTalentWithDifferentSubTalents = commonTalents.some(talentId => {
@@ -248,7 +248,7 @@ const UpdateProfile = () => {
 
       const isParentTalentWithoutSubTalents = offeredSubTalents.length === 0 && wantedSubTalents.length === 0;
 
-      // אם זה שני תתי כשרונות ואותו אב אך התתי כשרונות שונים זה כן טוב
+      // If these are two sub-talents with the same parent but different sub-talents, this is OK
       const hasDifferentSubTalents = offeredSubTalents.length > 0 && wantedSubTalents.length > 0 && !offeredSubTalents.every(subTalent => wantedSubTalents.includes(subTalent));
 
       return isParentTalentWithoutSubTalents || !hasDifferentSubTalents;
@@ -260,7 +260,7 @@ const UpdateProfile = () => {
       return;
     }
 
-    // סינון הכשרונות
+    // Filter talents
     const filterTalents = (talentIds: number[], otherTalentIds: number[]) => {
       const filteredTalents: Set<number> = new Set();
 
@@ -275,7 +275,7 @@ const UpdateProfile = () => {
           }
         });
 
-        // אם לא נבחרו תתי-כשרונות, נוסיף את כשרון האב
+        // If no sub-talents are selected, add the parent talent
         if (!hasSelectedSubTalent) {
           filteredTalents.add(talentId);
         }
@@ -321,13 +321,13 @@ const UpdateProfile = () => {
       }
 
       const response = await updateUserData(userId!, formDataToSend);
-      await refreshUserData(); // רענון נתוני המשתמש
-      await fetchUserTalents(); // רענון נתוני הכישרונות
+      await refreshUserData(); // Refresh user data
+      await fetchUserTalents(); // Refresh user talents
 
       console.log('Update successful:', response);
       setSuccess(true);
       setTimeout(() => {
-        navigate('/profile'); // חזרה לדף הפרופיל
+        navigate('/profile'); // Return to the profile page
       }, 2000);
     } catch (error: any) {
       console.error('Update failed:', error);

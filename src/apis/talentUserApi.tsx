@@ -1,7 +1,7 @@
 import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-// פונקציה להבאת כישורים לפי מזהה משתמש
+// Function to fetch talents by user id
 export const fetchTalentsByUserId = async (userId: number) => {
     const token = localStorage.getItem('authToken');
   

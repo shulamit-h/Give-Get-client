@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProfileDetailsProps } from '../../Types/123types'; // ייבוא של סוג המשתמש מהמיקום המתאים
+import { ProfileDetailsProps } from '../../Types/123types'; // Import of user type from the appropriate location
 
 
 

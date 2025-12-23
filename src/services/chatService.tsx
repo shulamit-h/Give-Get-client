@@ -4,7 +4,7 @@ import { MessageType } from '../Types/123types';
 const HUB_URL = process.env.REACT_APP_HUB_URL;
 let connection: signalR.HubConnection | null = null;
 
-// ממתין לחיבור יציב לפני Invoke
+// Wait for a stable connection before invoking
 const waitForConnection = async (timeout = 5000) => {
     const start = Date.now();
     while (connection && connection.state !== signalR.HubConnectionState.Connected) {
@@ -15,7 +15,7 @@ const waitForConnection = async (timeout = 5000) => {
     }
 };
 
-// קריאה בטוחה ל-invoke עם המתנה לחיבור
+// Safe invoke call with wait for connection
 const safeInvoke = async (methodName: string, ...args: any[]) => {
     args.map((arg) => console.log(typeof(arg)));
     if (!connection) throw new Error('SignalR connection is not initialized');
@@ -25,7 +25,7 @@ const safeInvoke = async (methodName: string, ...args: any[]) => {
     return connection.invoke(methodName, ...args);
 };
 
-// יצירת חיבור ל-SignalR
+// Create connection to SignalR
 export const startChatConnection = async (
     userId: number,
     exchangeId: number,
@@ -86,7 +86,7 @@ export const startChatConnection = async (
     }
 };
 
-// שליחת הודעה
+// Send message
 export const sendMessage = async (exchangeId: number, userId: number, text: string) => {
     console.log('Sending message:', { exchangeId, userId, text });
     try {
@@ -97,7 +97,7 @@ export const sendMessage = async (exchangeId: number, userId: number, text: stri
     }
 };
 
-// ניתוק חיבור
+// Disconnect
 export const stopChatConnection = async () => {
     if (connection) {
         try {

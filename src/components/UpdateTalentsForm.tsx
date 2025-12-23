@@ -14,33 +14,33 @@
 // }
 
 // const UpdateTalentsForm = ({ userId }: { userId: number }) => {
-//   const [allTalents, setAllTalents] = useState<Talent[]>([]); // כל הכישרונות
-//   const [selectedGive, setSelectedGive] = useState<number[]>([]); // כישרונות שאני מציע
-//   const [selectedRequest, setSelectedRequest] = useState<number[]>([]); // כישרונות שאני מחפש
-//   const [expanded, setExpanded] = useState<number[]>([]); // אבא שפותחים אותו
+//   const [allTalents, setAllTalents] = useState<Talent[]>([]); // All talents
+//   const [selectedGive, setSelectedGive] = useState<number[]>([]); // Talents I offer
+//   const [selectedRequest, setSelectedRequest] = useState<number[]>([]); // Talents I want
+//   const [expanded, setExpanded] = useState<number[]>([]); // Parent items that are expanded
 
-//   // מאפיין את הכישרונות לפי ההורה שלהם
+//   // Group talents by their parent
 //   const [childTalents, setChildTalents] = useState<{ [key: number]: Talent[] }>({});
 
 //   useEffect(() => {
 //     const loadUserTalents = async () => {
 //       try {
-//         // טוען את כל הכישרונות לצורך הצגה
+//         // Load all talents for display
 //         const talents = await fetchTalentsByParent(0);
 //         setAllTalents(talents);
 
-//         // טוען את הכישרונות של המשתמש מה-DB
+//         // Load the user's talents from the DB
 //         const userTalents: TalentUserDto[] = await fetchTalentsByUserId(userId);
-//         console.log('כישרונות מה-DB:', userTalents);
+//         console.log('talents from DB:', userTalents);
 
-//         // מיון לפי IsOffered
+//         // Sort by IsOffered
 //         const give = userTalents.filter(t => t.isOffered).map(t => t.talentId);
 //         const request = userTalents.filter(t => !t.isOffered).map(t => t.talentId);
 
 //         setSelectedGive(give);
 //         setSelectedRequest(request);
 
-//         // טוען את כל הכישרונות תחת כל כישרון אב (הילדים)
+//         // Load all child talents under each parent
 //         const talentsByParent: { [key: number]: Talent[] } = {};
 //         for (const talent of talents) {
 //           if (talent.parentId !== null) {
@@ -53,7 +53,7 @@
 //         setChildTalents(talentsByParent);
 
 //       } catch (error) {
-//         console.error('שגיאה בטעינת נתונים:', error);
+//         console.error('Error loading data:', error);
 //       }
 //     };
 
@@ -89,17 +89,17 @@
 //       })),
 //     ];
 
-//     console.log('נתונים לשמירה:', talentsDto);
+//     console.log('Data to save:', talentsDto);
 
 //     const formData = new FormData();
 //     formData.append('talents', JSON.stringify(talentsDto));
 
 //     try {
 //       await updateUserData(userId, formData);
-//       alert('הנתונים נשמרו בהצלחה!');
+//       alert('Data saved successfully!');
 //     } catch (err) {
-//       console.error('שגיאה בשמירה:', err);
-//       alert('שגיאה בשמירה');
+//       console.error('Error saving data:', err);
+//       alert('Error saving data');
 //     }
 //   };
 
@@ -111,7 +111,7 @@
 
 //   return (
 //     <div>
-//       <h2>כישרונות שאני מציע</h2>
+//       <h2>Talents I offer</h2>
 //       {allTalents.map(talent => (
 //         <div key={talent.id}>
 //           <input
@@ -121,14 +121,14 @@
 //           />
 //           {talent.name}
 
-//           {/* לחצן לפתיחת ילדים (אם יש) */}
+//           {/* Button to expand children (if any) */}
 //           {childTalents[talent.id] && (
 //             <button onClick={() => handleExpandClick(talent.id)}>
-//               {expanded.includes(talent.id) ? 'סגור' : 'הצג תתי-כישרונות'}
+//               {expanded.includes(talent.id) ? 'Close' : 'Show sub-talents'}
 //             </button>
 //           )}
 
-//           {/* הצגת הילדים אם נפתח */}
+//           {/* Display children when expanded */}
 //           {expanded.includes(talent.id) && childTalents[talent.id]?.map(child => (
 //             <div key={child.id} style={{ marginLeft: '20px' }}>
 //               <input
@@ -142,7 +142,7 @@
 //         </div>
 //       ))}
 
-//       <h2>כישרונות שאני מחפש</h2>
+//       <h2>Talents I want</h2>
 //       {allTalents.map(talent => (
 //         <div key={talent.id}>
 //           <input
@@ -152,14 +152,14 @@
 //           />
 //           {talent.name}
 
-//           {/* לחצן לפתיחת ילדים (אם יש) */}
+//           {/* Button to expand children (if any) */}
 //           {childTalents[talent.id] && (
 //             <button onClick={() => handleExpandClick(talent.id)}>
-//               {expanded.includes(talent.id) ? 'סגור' : 'הצג תתי-כישרונות'}
+//               {expanded.includes(talent.id) ? 'Close' : 'Show sub-talents'}
 //             </button>
 //           )}
 
-//           {/* הצגת הילדים אם נפתח */}
+//           {/* Display children when expanded */}
 //           {expanded.includes(talent.id) && childTalents[talent.id]?.map(child => (
 //             <div key={child.id} style={{ marginLeft: '20px' }}>
 //               <input
@@ -173,7 +173,7 @@
 //         </div>
 //       ))}
 
-//       <button onClick={handleSave}>שמור</button>
+//       <button onClick={handleSave}>Save</button>
 //     </div>
 //   );
 // };

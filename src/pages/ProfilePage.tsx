@@ -18,11 +18,11 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // אם אין משתמש, אין צורך לבצע את הקריאה
+    // If there is no user, no need to perform the call
     if (user) {
       const refreshData = async () => {
-        await refreshUserData(); // רענון נתוני המשתמש
-        await fetchUserTalents(); // רענון נתוני הכישרונות
+        await refreshUserData(); // Refresh user data
+        await fetchUserTalents(); // Refresh user talents
       };
       refreshData();
     }
@@ -35,7 +35,7 @@ const Profile = () => {
 
   const handleViewDetails = async () => {
     try {
-      await refreshUserData(); // רענון נתוני המשתמש
+      await refreshUserData(); // Refresh user data
       navigate('/profile');
     } catch (error) {
       console.error('Error refreshing user data:', error);
@@ -44,7 +44,7 @@ const Profile = () => {
 
   const handleViewTalents = async () => {
     setErrorMessage(null);
-    await fetchUserTalents(); // רענון נתוני הכישרונות
+    await fetchUserTalents(); // Refresh user talents
     navigate('/profile/talents');
   };
 

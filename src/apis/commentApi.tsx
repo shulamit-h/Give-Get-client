@@ -1,7 +1,7 @@
 import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-// פונקציה לשליפת תגובות
+// Function to fetch comments
 export const fetchComments = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/Comment`);
@@ -12,7 +12,7 @@ export const fetchComments = async () => {
     }
 };
 
-// פונקציה להוספת תגובה חדשה
+// Function to add a new comment
 export const addComment = async (content: string) => {
     const formData = new FormData();
     formData.append('content', content);

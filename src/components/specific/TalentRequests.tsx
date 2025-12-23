@@ -16,19 +16,19 @@ const TalentRequests: React.FC = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const data = await fetchTalentRequests();  // שליפת בקשות הכשרונות
+        const data = await fetchTalentRequests();  // Fetch talent requests
         const updatedRequests = await Promise.all(
           data.map(async (request: TalentRequestType) => {
             if (!request.userId || request.userId === 0) {
-              return { ...request, userName: "משתמש לא רשום" };  // אם userId הוא 0 או לא קיים, מחזירים שם ברירת מחדל
+              return { ...request, userName: "Unregistered user" };  // If userId is 0 or missing, return default name
             }
-            const user = await fetchUserById(request.userId);  // שליפת אובייקט המשתמש
-            return { ...request, userName: user ? user.userName : "משתמש לא רשום" };  // עדכון שם המשתמש
+            const user = await fetchUserById(request.userId);  // Fetch the user object
+            return { ...request, userName: user ? user.userName : "Unregistered user" };  // Update the username
           })
         );
-        setTalentRequests(updatedRequests);  // עדכון הסטייט עם הבקשות המעודכנות
+        setTalentRequests(updatedRequests);  // Update state with the updated requests
 
-        // שליפת שמות הקטגוריות
+        // Fetch category names
         const parentCategories = await Promise.all(
           updatedRequests.map(async (request) => {
             if (request.parentCategory === "0") {
@@ -49,10 +49,10 @@ const TalentRequests: React.FC = () => {
         console.error('Error fetching talent requests:', error);
       }
     };
-    // הגדרת polling
+    // Set up polling
     const interval = setInterval(() => {
       fetchRequests();
-    }, 3000); // כל 5 שניות
+    }, 3000); // every 3 seconds
 
     fetchRequests();
   }, []);
@@ -98,7 +98,7 @@ const TalentRequests: React.FC = () => {
       );
       setEditMode({ ...editMode, [id]: false });
       setEditedTalent(null);
-      window.location.reload(); // רענון הדף לאחר עדכון ושמירה
+      window.location.reload(); // Reload page after update and save
     } catch (error) {
       console.error('Error updating talent request:', error);
     }

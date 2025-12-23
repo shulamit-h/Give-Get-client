@@ -3,7 +3,7 @@ import { Container, Typography, Grid, Card, CardContent, Button } from "@mui/mat
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import "../styles/About.css";
-import "../styles/colors.css"; // חיבור לקובץ הצבעים
+import "../styles/colors.css"; // Import colors stylesheet
 
 const About = () => {
   return (
@@ -11,7 +11,7 @@ const About = () => {
       <div className="background-animation"></div>
 
       <Container maxWidth="lg" className="about-container">
-        {/* אנימציה של כותרת ראשית */}
+        {/* Main title animation */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ const About = () => {
 
         
 
-        {/* הכרטיסים */}
+        {/* The cards */}
         <Grid container spacing={2} className="about-sections">
           {[ 
             { icon: "⚡", title: "מה זה Give & Get?", text: "פלטפורמה להחלפת כישורים – אתם נותנים, לומדים, ומרוויחים!" },
@@ -66,7 +66,7 @@ const About = () => {
           ))}
         </Grid>
 
-        {/* כפתור קריאה לפעולה */}
+        {/* Call-to-action button */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

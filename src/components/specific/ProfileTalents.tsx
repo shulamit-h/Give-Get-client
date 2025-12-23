@@ -1,5 +1,5 @@
 import React from 'react';
-import { TalentType } from '../../Types/123types'; // ייבוא הסוגים מהמיקום המתאים
+import { TalentType } from '../../Types/123types'; // Import types from the appropriate location
 
 interface ProfileTalentsProps {
   talents: TalentType[];

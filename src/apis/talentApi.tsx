@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-// פונקציה לשליפת כישרון לפי ID
+// Function to fetch a talent by ID
 export const fetchTalentById = async (id: number) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/Talent/${id}`);
@@ -11,7 +11,7 @@ export const fetchTalentById = async (id: number) => {
     }
   };
   
-  // פונקציה להבאת רשימת הכישורים לפי קטגורית האב
+  // Function to fetch talents by parent category
   export const fetchTalentsByParent = async (parentId: number) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/Talent/byParent/${parentId}`);

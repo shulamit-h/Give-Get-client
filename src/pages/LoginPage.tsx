@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { TextField, Button, Box, Typography, IconButton, InputAdornment, Alert } from '@mui/material';
 import { Visibility, VisibilityOff, Home } from '@mui/icons-material';
-import { loginUser } from '../apis/loginApi'; // פונקציה זו מבצעת את הבקשה לשרת
+import { loginUser } from '../apis/loginApi'; // This function makes the request to the server
 import '../styles/AuthForm.css';
 
 function Login() {
@@ -16,7 +16,7 @@ function Login() {
     userName: false,
     pwd: false,
   });
-  const navigate = useNavigate(); // הוסף את ה-navigate
+  const navigate = useNavigate(); // add the navigate
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,12 +36,12 @@ function Login() {
 
     try {
       const response = await loginUser(formData.userName, formData.pwd);
-      console.log('Response from server:', response); // הדפסת תגובת השרת
+      console.log('Response from server:', response); // Print server response
 
-      if (response) {  // לא בודקים response.token כי זה רק הטוקן עצמו
+      if (response) {  // We don't check response.token because it's the token itself
         console.log('Saving token:', response);
-        localStorage.setItem('authToken', response); // שמור את הטוקן
-        navigate('/profile'); // נווט לדף הפרופיל
+        localStorage.setItem('authToken', response); // Store the token
+        navigate('/profile'); // Navigate to the profile page
       } else {
         console.error('No token received');
         setError('לא התקבל טוקן מהשרת');

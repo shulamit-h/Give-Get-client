@@ -5,7 +5,7 @@ export const registerUser = async (userData: FormData) => {
     console.log('i am in api, let see the for loop- entries');
     
     for (const pair of userData.entries()) {
-      console.log(pair[0], pair[1]);  // 🔹 פה תראי אם הנתונים נשלחים כמו שצריך
+      console.log(pair[0], pair[1]);  // 🔹 check if data is sent correctly
     }
   
     try {
@@ -26,7 +26,7 @@ export const registerUser = async (userData: FormData) => {
     }
   };
   
-//הבאת נתוני משתמש מהשרת
+// Fetch user data from the server
 export const fetchUserData = async () => {
     const token = localStorage.getItem('authToken');
   
@@ -39,11 +39,11 @@ export const fetchUserData = async () => {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      // הוספנו כאן את כתובת התמונה
+      // Added image URL here
       const userData = response.data;
-      userData.profileImageUrl = userData.profileImageUrl ? `${API_BASE_URL}/User/profile-image/${userData.id}` : '/path/to/default-image.jpg'; // שים תמונה ברירת מחדל במקרה שאין תמונה
+      userData.profileImageUrl = userData.profileImageUrl ? `${API_BASE_URL}/User/profile-image/${userData.id}` : '/path/to/default-image.jpg'; // Use a default image if none exists
   
-      // console.log('User data from API:', userData); // הדפסת הנתונים שהתקבלו
+      // console.log('User data from API:', userData); // Print the received data
       return userData;
     } catch (error: any) {
       throw error.response ? error.response.data : error.message;
@@ -60,14 +60,14 @@ export const fetchUserById = async (userId: number) => {
       const response = await axios.get(`${API_BASE_URL}/User/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data; // מחזיר את כל המשתמש
+      return response.data; // Return the full user
     } catch (error) {
       console.error('Error fetching user:', error);
-      return null;  // אם יש שגיאה מחזיר null
+      return null;  // Return null on error
     }
 };
 
-// פונקציה לעדכון נתוני המשתמש
+// Function to update user data
 export const updateUserData = async (userId: number, userData: FormData) => {
     const token = localStorage.getItem('authToken');
   
@@ -76,7 +76,7 @@ export const updateUserData = async (userId: number, userData: FormData) => {
     }
   
     for (const pair of userData.entries()) {
-      console.log(pair[0], pair[1]);  // 🔹 פה תראי אם הנתונים נשלחים כמו שצריך
+      console.log(pair[0], pair[1]);  // 🔹 check if data is sent correctly
     }
   
     console.log('FormData to send:', userData)
@@ -103,7 +103,7 @@ export const getProfileImage = async (userId: number) => {
     const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
     return URL.createObjectURL(imageBlob);
   } catch (error) {
-    // אם יש שגיאה (למשל 404), נחזיר תמונת ברירת מחדל מקומית
+    // If there is an error (e.g., 404), return a local default image
     return require('../assets/images/default-user.png');
   }
 };
@@ -116,7 +116,7 @@ export const updateUserScore = async (userId: number, action: number) => {
   
     try {
       const response = await axios.put(`${API_BASE_URL}/user/update-score/${userId}`,
-        action, // הנתונים שנשלחים לשרת
+        action, // Data sent to server
         {
           headers: {
             'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ export const updateUserScore = async (userId: number, action: number) => {
         }
       );
   
-      return response.data; // מחזיר את הנתונים מהשרת
+      return response.data; // Return data from server
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to update user score');
     }

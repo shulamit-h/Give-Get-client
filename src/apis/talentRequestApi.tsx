@@ -1,7 +1,7 @@
 import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-// פונקציה להוספת בקשת כישרון חדשה
+// Function to add a new talent request
 export const addTalentRequest = async (talentRequest: { UserId: number; TalentName: string; ParentCategory: number; RequestDate: Date; }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/TalentRequest`, talentRequest, {
@@ -16,7 +16,7 @@ export const addTalentRequest = async (talentRequest: { UserId: number; TalentNa
     }
 };
 
-// פונקציה לשליפת בקשות הכישרונות
+// Function to fetch talent requests
   export const fetchTalentRequests = async () => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -32,7 +32,7 @@ export const addTalentRequest = async (talentRequest: { UserId: number; TalentNa
     }
 };
 
-// פונקציה למחיקת בקשת כישרון
+// Function to delete a talent request
   export const deleteTalentRequest = async (id: number) => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -47,7 +47,7 @@ export const addTalentRequest = async (talentRequest: { UserId: number; TalentNa
     }
 };
 
-// פונקציה לעדכון בקשת כישרון
+// Function to update a talent request
   export const updateTalentRequest = async (id: number, updatedTalent: any) => {
     const token = localStorage.getItem('authToken');
     if (!token) {

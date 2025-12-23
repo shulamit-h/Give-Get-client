@@ -5,7 +5,7 @@ import { TopUserType } from '../../Types/123types';
 import defaultUserImage from '../../assets/images/default-user.png';
 
 const TopUsers: React.FC = () => {
-  const [topUsers, setTopUsers] = useState<(TopUserType & { profileImage: string })[]>([]); // הוספת profileImage דינמית
+  const [topUsers, setTopUsers] = useState<(TopUserType & { profileImage: string })[]>([]); // Add dynamic profileImage
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,23 +13,23 @@ const TopUsers: React.FC = () => {
       try {
         const users = await fetchTopUsers();
     
-        // שליפת תמונת הפרופיל עבור כל משתמש
+        // Fetch profile image for each user
         const usersWithImages = await Promise.all(
           users.map(async (user: TopUserType) => {
-            // שליפת המזהה מתוך ה-URL של תמונת הפרופיל
-            const userId = user.profileImageUrl.split('/').pop(); // חיתוך ה-URL והפקת המזהה
+            // Extract the id from the profile image URL
+            const userId = user.profileImageUrl.split('/').pop(); // Split the URL and obtain the id
             let profileImage = '';
     
             if (userId) {
               try {
-                profileImage = await getProfileImage(Number(userId)); // שליחה של המזהה לפונקציה
+                profileImage = await getProfileImage(Number(userId)); // Send the id to the function
               } catch (error) {
                 console.error('Error fetching profile image for user:', userId, error);
-                profileImage =defaultUserImage; // תמונת ברירת מחדל במקרה של שגיאה
+                profileImage = defaultUserImage; // Default image in case of an error
               }
             }
     
-            return { ...user, profileImage }; // הוספת תמונת הפרופיל למידע של המשתמש
+            return { ...user, profileImage }; // Add the profile image to the user's info
           })
         );
     

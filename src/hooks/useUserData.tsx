@@ -8,11 +8,11 @@ const useUserData = () => {
   const fetchUser = async () => {
     try {
       const data = await fetchUserData();
-      // console.log('User data from API:', data); // הדפסה לקונסול
-      if (JSON.stringify(data) !== JSON.stringify(user)) {  // אם המידע שונה
-        setUser(data);  // עדכון הסטייט רק אם הנתונים השתנו
+      // console.log('User data from API:', data); // Print to console
+      if (JSON.stringify(data) !== JSON.stringify(user)) {  // If the data differs
+        setUser(data);  // Update state only if data changed
       }
-      setErrorMessage(null); // איפוס הודעת השגיאה במקרה של הצלחה
+      setErrorMessage(null); // Reset error message on success
     } catch (error) {
       console.error('Error fetching user data:', error);
       setErrorMessage('Error fetching user data');
@@ -25,9 +25,9 @@ const useUserData = () => {
       return;
     }
     try {
-      const updatedUser = await updateUserData(user.id, updatedData); // עדכון עם userId
-      if (JSON.stringify(updatedUser) !== JSON.stringify(user)) {  // אם המידע שונה
-        setUser(updatedUser);  // עדכון הסטייט עם הנתונים החדשים
+      const updatedUser = await updateUserData(user.id, updatedData); // Update with userId
+      if (JSON.stringify(updatedUser) !== JSON.stringify(user)) {  // If the info changed
+        setUser(updatedUser);  // Update state with the new data
       }
     } catch (error) {
       // console.error('Error updating user data:', error);
@@ -35,12 +35,12 @@ const useUserData = () => {
     }
   };
 
-  // קריאה ראשונית לנתוני המשתמש
+  // Initial call to fetch user data
   useEffect(() => {
     if (!user) {
-      fetchUser(); // קריאה רק אם אין נתונים
+      fetchUser(); // Call only if there is no data
     }
-  }, [user]); // התנאי הזה גורם לקריאה רק אם `user` משתנה
+  }, [user]); // This condition triggers the call only if `user` changes
 
   return { user, errorMessage, refreshUserData: fetchUser, updateUserData: updateUserDataAndRefresh };
 };

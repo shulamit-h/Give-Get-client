@@ -46,10 +46,10 @@ const Talents = () => {
 
     try {
       const token = localStorage.getItem('authToken');
-      let userId = 0; // ברירת מחדל אם אין טוקן
+      let userId = 0; // Default if no token
       if (token) {
-        const decodedToken: any = jwtDecode(token); // פענוח הטוקן
-        console.log('Decoded Token:', decodedToken); // הוסף שורת הדפסה כאן
+        const decodedToken: any = jwtDecode(token); // Decode the token
+        console.log('Decoded Token:', decodedToken); // Added debug log here
         userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || 0;
       }
 
@@ -66,7 +66,7 @@ const Talents = () => {
       setError(null);
       setSnackbarMessage('בקשת הוספת הכשרון התבצע בהצלחה.');
 
-      // עדכון רשימת הכשרונות
+      // Update talents list
       const response = await fetchTalentsByParent(0);
       const talentsWithSubTalents = await Promise.all(
         response.map(async (talent: TalentType) => {
@@ -88,7 +88,7 @@ const Talents = () => {
         הכישרונות שלנו
       </Typography>
 
-      {/* רשימת הכישרונות */}
+      {/* List of talents */}
       <Grid container spacing={2}>
         {talents.map((talent) => (
           <Grid item xs={12} key={talent.id}>
@@ -106,7 +106,7 @@ const Talents = () => {
         ))}
       </Grid>
 
-      {/* רכיב הוספת כישרון */}
+      {/* Add talent request component */}
       <Box className="add-talent-wrapper">
         <Paper elevation={3} className="add-talent-card">
           <Typography variant="h6" gutterBottom>
@@ -145,7 +145,7 @@ const Talents = () => {
         open={!!snackbarMessage}
         autoHideDuration={6000}
         onClose={() => setSnackbarMessage(null)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // מיקום ההודעה
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Position of the notification
       >
         <Alert onClose={() => setSnackbarMessage(null)} severity="success">
           {snackbarMessage}

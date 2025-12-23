@@ -64,8 +64,8 @@ export type UserType = {
   email: string;
   phoneNumber: string;
   score: number;
-  talentsOffered: TalentUserDtoType[];  // עדכון לסוג המתאים
-  talentsWanted: TalentUserDtoType[];   // עדכון לסוג המתאים
+  talentsOffered: TalentUserDtoType[];  // Updated to appropriate type
+  talentsWanted: TalentUserDtoType[];   // Updated to appropriate type
   age: string;
   gender: 'Male' | 'Female';
   desc: string;

@@ -7,12 +7,12 @@ export const loginUser = async (userName: string, pwd: string) => {
         params: { userName, pwd }
       });
   
-      console.log('Server response:', response.data); // נבדוק מה מחזיר השרת
+      console.log('Server response:', response.data); // Check what the server returns
   
       if (response.data) {
-        localStorage.setItem('authToken', response.data); // שומר את הטוקן נכון
+        localStorage.setItem('authToken', response.data); // Store the token
       } else {
-        throw new Error('No token received from server'); // במידה ואין טוקן, תזרוק שגיאה ברורה
+        throw new Error('No token received from server'); // If no token, throw a clear error
       }
   
       return response.data;

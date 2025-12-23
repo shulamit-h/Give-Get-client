@@ -13,8 +13,8 @@ import { TalentType } from '../../Types/123types';
 interface TalentSelectionProps {
   talents: TalentType[];
   subTalents: { [key: number]: TalentType[] };
-  offeredTalents: number[];  // כישרונות מוצעים
-  wantedTalents: number[];   // כישרונות רצויים
+  offeredTalents: number[];  // Offered talents
+  wantedTalents: number[];   // Wanted talents
   handleTalentChange: (e: SelectChangeEvent<number[]>, type: 'offered' | 'wanted') => void;
   isTalentChecked: (talentId: number, type: 'offered' | 'wanted') => boolean;
 }
@@ -27,7 +27,7 @@ const TalentSelection: React.FC<TalentSelectionProps> = ({
   handleTalentChange,
   isTalentChecked,
 }) => {
-  // בחירת כישרונות מוצעים ורצויים לפי הצורך
+  // Select offered and wanted talents as needed
   const handleOfferedTalentChange = (e: SelectChangeEvent<number[]>) => {
     handleTalentChange(e, 'offered');
   };
@@ -38,7 +38,7 @@ const TalentSelection: React.FC<TalentSelectionProps> = ({
 
   return (
     <>
-      {/* הצגת כישרונות מוצעים */}
+      {/* Display offered talents */}
       <FormControl margin="normal" fullWidth>
         <InputLabel id="offered-talents-label">כישורים מוצעים</InputLabel>
         <Select
@@ -63,7 +63,7 @@ const TalentSelection: React.FC<TalentSelectionProps> = ({
         </Select>
       </FormControl>
 
-      {/* הצגת תתי כישרונות עבור המוצעים */}
+      {/* Display sub-talents for offered */}
       {offeredTalents.map((talentId) =>
         subTalents[talentId] && subTalents[talentId].length > 0 ? (
           <FormControl key={talentId} margin="normal" fullWidth>
@@ -94,7 +94,7 @@ const TalentSelection: React.FC<TalentSelectionProps> = ({
         ) : null
       )}
 
-      {/* הצגת כישרונות רצויים */}
+      {/* Display wanted talents */}
       <FormControl margin="normal" fullWidth>
         <InputLabel id="wanted-talents-label">כישורים רצויים</InputLabel>
         <Select
@@ -119,7 +119,7 @@ const TalentSelection: React.FC<TalentSelectionProps> = ({
         </Select>
       </FormControl>
 
-      {/* הצגת תתי כישרונות עבור הרצויים */}
+      {/* Display sub-talents for wanted */}
       {wantedTalents.map((talentId) =>
         subTalents[talentId] && subTalents[talentId].length > 0 ? (
           <FormControl key={talentId} margin="normal" fullWidth>

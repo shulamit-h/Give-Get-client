@@ -18,10 +18,10 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId, otherUserId }
         setMessages(history);
         console.log('Chat history:', history.map((msg) => msg.text));
 
-        // טעינת תמונות עבור המשתמשים
+        // Loading images for users
         const images = {
-          [userId]: await getProfileImage(userId), // תמונת המשתמש הנוכחי
-          [otherUserId]: await getProfileImage(otherUserId), // תמונת המשתמש השני
+          [userId]: await getProfileImage(userId), // Current user's profile image
+          [otherUserId]: await getProfileImage(otherUserId), // Other user's profile image
         };
         setUserImages(images);
 
@@ -43,7 +43,7 @@ const ChatBox: React.FC<ChatBoxPropsType> = ({ userId, exchangeId, otherUserId }
   const handleSend = async () => {
     if (!input.trim()) return;
     console.log('Sending message:', input);
-    await sendMessage(exchangeId, userId, input); // שליחת הודעה למשתמש הנוכחי
+    await sendMessage(exchangeId, userId, input); // Send message to the current user
     setInput('');
   };
 

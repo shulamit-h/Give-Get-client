@@ -25,12 +25,12 @@ const Exchange = () => {
       console.log('Fetching deals for user ID:', userId);
       
       try {
-        if (dealsLoaded) return;  // אם כבר טענת את הנתונים, אל תעשה זאת שוב
+        if (dealsLoaded) return;  // If data already loaded, do not load again
 
         if (userId) {
           console.log(`Fetching deals for user ID: ${userId}`);
 
-          // // בדיקה אם המידע כבר קיים במטמון
+          // // Check if data already exists in cache
           // const cachedDeals = localStorage.getItem(`deals_${userId}`);
           // if (cachedDeals) {
           //   console.log('Loading deals from cache');
@@ -65,7 +65,7 @@ const Exchange = () => {
 
           setDeals(updatedDeals);
 
-          // שמירת התוצאה במטמון
+          // Save the result to cache
           localStorage.setItem(`deals_${userId}`, JSON.stringify(updatedDeals));
 
           const storedLikes = JSON.parse(localStorage.getItem(`likedDeals_${userId}`) || '{}');
@@ -76,11 +76,11 @@ const Exchange = () => {
         console.error('Error fetching deals:', error);
       } finally {
         setLoading(false);
-        setDealsLoaded(true);  // סימן שסיימת לטעון את הנתונים
+        setDealsLoaded(true);  // Mark that data loading is complete
       }
     };
 
-    // נקרא רק אם userId קיים
+    // Called only if userId exists
     console.log('User ID:', userId);
     if (userId) {
       getDeals();
@@ -172,7 +172,7 @@ const Exchange = () => {
           return d;
         })
       );
-    //   // עדכון המטמון עם הנתונים החדשים
+    //   // update the cache with the new data
     //   localStorage.setItem(`deals_${userId}`, JSON.stringify(deals.map(d => 
     //     d.id === deal.id ? { 
     //         ...d, 

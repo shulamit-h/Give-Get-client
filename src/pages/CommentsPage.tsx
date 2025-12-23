@@ -18,13 +18,13 @@ const Comments = () => {
       try {
         const response = await fetchComments();
 
-        // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
+        // Fetch user details and profile image for each comment
         const commentsWithUserDetails = await Promise.all(
           response.map(async (comment: CommentType) => {
             if (comment.userId !== 0) {
               // const user = await fetchUserById(comment.userId);
               const profileImage = await getProfileImage(comment.userId);
-              // return { ...comment, userName: user ? user.userName : "לא ידוע", profileImage };
+              // return { ...comment, userName: user ? user.userName : "Unknown", profileImage };
               return { ...comment,profileImage };
 
             }
@@ -53,13 +53,13 @@ const Comments = () => {
       setError(null);
       const response = await fetchComments();
 
-      // שליפת פרטי המשתמש ותמונת הפרופיל עבור כל תגובה
+      // Fetch user details and profile image for each comment
       const commentsWithUserDetails = await Promise.all(
         response.map(async (comment: CommentType) => {
           if (comment.userId !== 0) {
             // const user = await fetchUserById(comment.userId);
             const profileImage = await getProfileImage(comment.userId);
-            // return { ...comment, userName: user ? user.userName : "לא ידוע", profileImage };
+            // return { ...comment, userName: user ? user.userName : "unknown", profileImage };
             return { ...comment,profileImage };
             
           }

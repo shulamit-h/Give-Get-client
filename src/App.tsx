@@ -5,7 +5,7 @@ import Register from './pages/RegisterPage';
 import Login from './pages/LoginPage';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Profile from './pages/ProfilePage'; // הנתיב שלך לדף פרופיל
+import Profile from './pages/ProfilePage'; // Your path to the profile page
 import UpdateProfile from './components/specific/UpdateProfile';
 import Comments from './pages/CommentsPage';
 import Talents from './pages/TalentsPage';
