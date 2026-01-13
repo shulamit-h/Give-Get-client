@@ -1,7 +1,13 @@
 # Give & Get — Client (React + TypeScript)
-![Give & Get Demo](./src/assets/images/demo.gif)
 
 A focused, polished README for the client-side application of the Give & Get project. This file documents how to run the client, what it contains, and the important implementation details discovered in the repository.
+
+---
+
+### ✨ See it in Action
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/777e8e5d-b2c6-4ca5-b9fc-c4907dcffbe2" width="500" alt="Give & Get Demo">
+</p>
 
 ---
 
